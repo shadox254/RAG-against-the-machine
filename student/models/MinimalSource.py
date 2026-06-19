@@ -13,7 +13,7 @@
 #  File: MinimalSource.py                                                     #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/16 10:13:39 by rruiz                                      #
-#  Updated: 2026/06/16 10:29:30 by rruiz                                      #
+#  Updated: 2026/06/18 14:21:16 by rruiz                                      #
 # *************************************************************************** #
 
 from pydantic import BaseModel

@@ -13,12 +13,12 @@
 #  File: AnsweredQuestion.py                                                  #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/16 10:21:50 by rruiz                                      #
-#  Updated: 2026/06/16 10:29:12 by rruiz                                      #
+#  Updated: 2026/06/16 11:44:36 by rruiz                                      #
 # *************************************************************************** #
 
 from typing import List
-from src.models.MinimalSource import MinimalSource
-from src.models.UnansweredQuestion import UnansweredQuestion
+from student.models.MinimalSource import MinimalSource
+from student.models.UnansweredQuestion import UnansweredQuestion
 
 
 class AnsweredQuestion(UnansweredQuestion):
