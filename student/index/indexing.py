@@ -13,7 +13,7 @@
 #  File: indexing.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/16 12:57:52 by rruiz                                      #
-#  Updated: 2026/06/20 09:45:41 by rruiz                                      #
+#  Updated: 2026/06/20 15:00:46 by rruiz                                      #
 # *************************************************************************** #
 
 import os
@@ -55,8 +55,8 @@ def ingesting(max_chunk_size: int) -> None:
         for file, file_ext in doc_list:
             with open(file, 'r', encoding='utf-8') as f:
                 content = f.read()
-            t = chunk(content, file_ext, max_chunk_size)
-            for first_index, last_index in t:
+            chunks = chunk(content, file_ext, max_chunk_size)
+            for first_index, last_index in chunks:
                 text = content[first_index:last_index]
                 chunk_data = {
                     'file_path': file,
