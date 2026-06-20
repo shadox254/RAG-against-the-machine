@@ -13,7 +13,7 @@
 #  File: indexing.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/16 12:57:52 by rruiz                                      #
-#  Updated: 2026/06/19 16:07:09 by rruiz                                      #
+#  Updated: 2026/06/20 09:45:41 by rruiz                                      #
 # *************************************************************************** #
 
 import os
@@ -25,6 +25,14 @@ from student.index.chunking import chunk
 
 
 def ingesting(max_chunk_size: int) -> None:
+    """
+    Handles the indexing logic: iterates through the files to process,
+        splits them into chunks, indexes them, and saves the output in a
+        properly formatted .json file.
+
+    Args:
+        max_chunk_size (int): The maximum size of each chunk.
+    """
 
     src_dir = 'data/raw/vllm-0.10.1'
     doc_list = find_doc(src_dir)
@@ -101,6 +109,16 @@ def ingesting(max_chunk_size: int) -> None:
 
 
 def find_doc(directory: str) -> List[Tuple[str, str]]:
+    """
+    Finds all .md or .py files within a given directory.
+
+    Args:
+        directory (str): The root directory to search in.
+
+    Returns:
+        List[Tuple[str, str]]: A list of tuples containing the file path and
+            its extension.
+    """
 
     doc_list = []
 

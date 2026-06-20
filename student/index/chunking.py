@@ -13,7 +13,7 @@
 #  File: chunking.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/16 13:51:15 by rruiz                                      #
-#  Updated: 2026/06/19 16:07:32 by rruiz                                      #
+#  Updated: 2026/06/20 09:46:48 by rruiz                                      #
 # *************************************************************************** #
 
 from typing import Tuple, List
@@ -23,6 +23,20 @@ def chunk(content: str,
           file_type: str,
           max_chunk_size: int
           ) -> List[Tuple[int, int]]:
+    """
+    Defines the separator to use to split the text into chunks.
+
+    Args:
+        content (str): The text to be chunked.
+        file_type (str): The extension of the file the text comes from
+            ('py' or 'md').
+        max_chunk_size (int): The maximum size of each chunk.
+
+    Returns:
+        List[Tuple[int, int]]: A list of tuples where the first value
+            is the start index of the chunk in the original content, and the
+            second value is the end index.
+    """
 
     if file_type == 'md':
         sep = ['\n\n#', '\n\n', '\n', ' ']
@@ -40,6 +54,22 @@ def cutting(
         max_chunk_size: int,
         offset: int
         ) -> List[Tuple[int, int]]:
+    """
+    Splits the content into chunks of maximum size `max_chunk_size` using a
+        list of separators.
+
+    Args:
+        content (str): The text to be chunked.
+        sep (list[str]): The list of separators to use for cutting.
+        max_chunk_size (int): The maximum size of each chunk.
+        offset (int): The reference index in the original text, used to keep
+            track across recursive calls.
+
+    Returns:
+        List[Tuple[int, int]]: A list of tuples where the first value is the
+            start index of the chunk in the original content, and the second
+            value is the end index.
+    """
 
     if len(content) <= max_chunk_size:
         return [(offset, offset + len(content))]
