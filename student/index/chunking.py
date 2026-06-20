@@ -13,7 +13,7 @@
 #  File: chunking.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/16 13:51:15 by rruiz                                      #
-#  Updated: 2026/06/20 09:46:48 by rruiz                                      #
+#  Updated: 2026/06/20 15:33:12 by rruiz                                      #
 # *************************************************************************** #
 
 from typing import Tuple, List
@@ -40,15 +40,14 @@ def chunk(content: str,
 
     if file_type == 'md':
         sep = ['\n\n#', '\n\n', '\n', ' ']
+        blocks = md_cutting(content, sep, max_chunk_size, 0)
     else:
-        sep = ['\nimport', '\nclass ', '\ndef ', '\n\n', '\n', ' ']
-
-    blocks = cutting(content, sep, max_chunk_size, 0)
+        blocks = py_cutting(content, max_chunk_size)
 
     return blocks
 
 
-def cutting(
+def md_cutting(
         content: str,
         sep: list[str],
         max_chunk_size: int,
@@ -86,36 +85,60 @@ def cutting(
     current_sep = sep[0]
     other_sep = sep[1:]
 
-    cut_points = []
+    parts = []
     search_from = 0
 
     while True:
         index = content.find(current_sep, search_from)
         if index == -1:
+            parts.append(content[search_from:])
             break
-        cut_points.append(index)
+        parts.append(content[search_from:index + len(current_sep)])
         search_from = index + len(current_sep)
 
-    if len(cut_points) == 0:
-        return cutting(content, other_sep, max_chunk_size, offset)
-
-    parts = []
-    start = 0
-    for point in cut_points:
-        parts.append(content[start:point])
-        start = point
-    parts.append(content[start:])
+    if len(parts) == 1:
+        return md_cutting(content, other_sep, max_chunk_size, offset)
 
     result = []
-    local_pos = 0
+    current_chunk_len = 0
+    current_start = offset
+    local_offset = 0
+
     for part in parts:
-        offset_part = offset + local_pos
-        if len(part) > 0:
-            if len(part) <= max_chunk_size:
-                result.append((offset_part, offset_part + len(part)))
+        part_len = len(part)
+
+        if current_chunk_len + part_len <= max_chunk_size:
+            current_chunk_len += part_len
+        else:
+            if current_chunk_len > 0:
+                result.append(
+                    (current_start,
+                     current_start + current_chunk_len)
+                    )
+
+                local_offset += current_chunk_len
+                current_start = offset + local_offset
+
+            if part_len > max_chunk_size:
+                sub_chunks = md_cutting(
+                    part,
+                    other_sep,
+                    max_chunk_size,
+                    current_start
+                    )
+
+                result.extend(sub_chunks)
+                local_offset += part_len
+                current_start = offset + local_offset
+                current_chunk_len = 0
             else:
-                result.extend(cutting(part, other_sep, max_chunk_size,
-                                      offset_part))
-            local_pos += len(part)
+                current_chunk_len = part_len
+
+    if current_chunk_len > 0:
+        result.append((current_start, current_start + current_chunk_len))
 
     return result
+
+
+def py_cutting(content: str, max_chunk_size: int) -> List[Tuple[int, int]]:
+    return [(0, 0)]

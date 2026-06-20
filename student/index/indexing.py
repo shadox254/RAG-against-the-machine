@@ -13,7 +13,7 @@
 #  File: indexing.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/16 12:57:52 by rruiz                                      #
-#  Updated: 2026/06/20 15:00:46 by rruiz                                      #
+#  Updated: 2026/06/20 15:24:50 by rruiz                                      #
 # *************************************************************************** #
 
 import os
