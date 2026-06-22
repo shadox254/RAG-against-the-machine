@@ -13,10 +13,11 @@
 #  File: chunking.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/16 13:51:15 by rruiz                                      #
-#  Updated: 2026/06/20 15:33:12 by rruiz                                      #
+#  Updated: 2026/06/22 14:10:59 by rruiz                                      #
 # *************************************************************************** #
 
 from typing import Tuple, List
+from langchain_text_splitters import RecursiveCharacterTextSplitter, Language
 
 
 def chunk(content: str,
@@ -141,4 +142,37 @@ def md_cutting(
 
 
 def py_cutting(content: str, max_chunk_size: int) -> List[Tuple[int, int]]:
-    return [(0, 0)]
+    """
+    "Splits the content into chunks of maximum size max_chunk_size using
+        LangChain's RecursiveCharacterTextSplitter."
+
+    Args:
+        content (str): The text to be chunked.
+        max_chunk_size (int): The maximum size of each chunk.
+        offset (int): The reference index in the original text, used to keep
+            track across recursive calls.
+
+    Returns:
+        List[Tuple[int, int]]: A list of tuples where the first value is the
+            start index of the chunk in the original content, and the second
+            value is the end index.
+    """
+
+    result = []
+
+    test = RecursiveCharacterTextSplitter.from_language(
+        language=Language.PYTHON,
+        chunk_size=max_chunk_size
+    )
+
+    raw_chunks = test.split_text(content)
+    last_index = 0
+    for chunk in raw_chunks:
+        start = content.find(chunk, last_index)
+        end = start + len(chunk)
+
+        result.append((start, end))
+
+        last_index = start + 1
+
+    return result
