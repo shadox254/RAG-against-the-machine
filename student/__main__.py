@@ -13,12 +13,13 @@
 #  File: __main__.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/15 15:13:42 by rruiz                                      #
-#  Updated: 2026/06/19 11:28:18 by rruiz                                      #
+#  Updated: 2026/06/24 09:42:21 by rruiz                                      #
 # *************************************************************************** #
 
 import fire
 import sys
 from student.index.indexing import ingesting
+from student.search.retriever import retrieving
 
 
 def index(max_chunk_size: int) -> None:
@@ -26,8 +27,9 @@ def index(max_chunk_size: int) -> None:
     print('Ingestion complete! Indices saved under data/processed/')
 
 
-def search() -> None:
-    print('search for a single query')
+def search(query: str, k: int = 1) -> None:
+    result = retrieving(query, k)
+    print(result)
 
 
 def search_dataset(
@@ -52,6 +54,8 @@ def evaluate() -> None:
 if __name__ == "__main__":
     try:
         fire.Fire()
+    except (FileNotFoundError) as e:
+        print(e)
     except KeyboardInterrupt:
         print('Program interrupt by user.', file=sys.stderr)
 
