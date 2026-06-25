@@ -22,21 +22,18 @@ import os
 from student.models.MinimalSearchResults import MinimalSearchResults
 from student.models.StudentSearchResults import StudentSearchResults
 from student.models.MinimalSource import MinimalSource
+from typing import Tuple, Any
 
 
-def retrieving(query: str, k: int) -> str:
+def load_indexes() -> Tuple[bm25s.BM25, bm25s.BM25, Any, Any]:
     """
-    Queries the BM25 indexes (Markdown and Python) to retrieve the most
-        relevant text segments for a given query, then merges and sorts the
-        results.
-
-    Args:
-        query (str): The search query provided by the user.
-        k (int): The maximum number of final results to return after merging.
+    Loads BM25 indexes and chunk files.
 
     Returns:
-        str: A JSON-formatted string containing the results structured
-             according to the StudentSearchResults model.
+        tuple: (md_retriever, py_retriever, chunks_md, chunks_py)
+
+    Raises:
+        FileNotFoundError: If index directories or chunk files do not exist.
     """
 
     md_dir = 'data/processed/bm25_md'
@@ -45,33 +42,25 @@ def retrieving(query: str, k: int) -> str:
     py_chunks_f = 'data/processed/chunks/chunks_py.json'
 
     if not os.path.exists(md_dir):
-        raise FileNotFoundError('Error: The directory “data/processed/bm25_md”'
-                                ' does not exist. Try “uv run python -m'
-                                ' student index --max_chunk_size int” then'
+        raise FileNotFoundError('Error: The directory "data/processed/bm25_md"'
+                                ' does not exist. Try "uv run python -m'
+                                ' student index --max_chunk_size int" then'
                                 ' try the command again.')
 
     if not os.path.exists(py_dir):
-        raise FileNotFoundError('Error: The directory “data/processed/bm25_py”'
-                                ' does not exist. Try “uv run python -m'
-                                ' student index --max_chunk_size int” then'
+        raise FileNotFoundError('Error: The directory "data/processed/bm25_py"'
+                                ' does not exist. Try "uv run python -m'
+                                ' student index --max_chunk_size int" then'
                                 ' try the command again.')
 
     if not os.path.exists(md_chunks_f) or not os.path.exists(py_chunks_f):
-        raise FileNotFoundError('Error: Chunk files does not exist. Try'
-                                ' “uv run python -m student index'
-                                ' --max_chunk_size int” then try the command'
+        raise FileNotFoundError('Error: Chunk files do not exist. Try'
+                                ' "uv run python -m student index'
+                                ' --max_chunk_size int" then try the command'
                                 ' again.')
 
-    md_path = bm25s.Path(md_dir)
-    py_path = bm25s.Path(py_dir)
-
-    md = bm25s.BM25.load(save_dir=md_path)
-    py = bm25s.BM25.load(save_dir=py_path)
-
-    tokenized_query = bm25s.tokenize(query)
-
-    md_results = md.retrieve(tokenized_query, k=k)
-    py_results = py.retrieve(tokenized_query, k=k)
+    md = bm25s.BM25.load(save_dir=bm25s.Path(md_dir))
+    py = bm25s.BM25.load(save_dir=bm25s.Path(py_dir))
 
     with open(md_chunks_f, 'r') as f:
         chunks_md = json.load(f)
@@ -79,39 +68,77 @@ def retrieving(query: str, k: int) -> str:
     with open(py_chunks_f, 'r') as f:
         chunks_py = json.load(f)
 
-    all_result = []
+    return (md, py, chunks_md, chunks_py)
+
+
+def search(
+    query: str,
+    k: int,
+    indexes: Tuple[bm25s.BM25, bm25s.BM25, Any, Any],
+    question_id: str = 'q1'
+) -> MinimalSearchResults:
+    """
+    Queries the BM25 indexes to retrieve the most relevant text segments.
+
+    Args:
+        query (str): The search query.
+        k (int): The maximum number of results to return.
+        indexes (tuple): Output of load_indexes().
+        question_id (str): The ID of the question being searched.
+
+    Returns:
+        MinimalSearchResults: The retrieved sources for this query.
+    """
+
+    md, py, chunks_md, chunks_py = indexes
+
+    tokenized_query = bm25s.tokenize(query)
+
+    md_results = md.retrieve(tokenized_query, k=k)
+    py_results = py.retrieve(tokenized_query, k=k)
+
+    all_results = []
     for doc_index, score in zip(md_results.documents[0], md_results.scores[0]):
-        chunk = chunks_md[doc_index]
-        all_result.append((score, chunk))
+        all_results.append((score, chunks_md[doc_index]))
 
     for doc_index, score in zip(py_results.documents[0], py_results.scores[0]):
-        chunk = chunks_py[doc_index]
-        all_result.append((score, chunk))
+        all_results.append((score, chunks_py[doc_index]))
 
-    #
-    all_result.sort(key=lambda x: x[0], reverse=True)
-    all_result = all_result[:k]
+    all_results.sort(key=lambda x: x[0], reverse=True)
+    all_results = all_results[:k]
 
-    sources = []
-    minimal_result = []
+    sources = [
+        MinimalSource(
+            file_path=chunk['file_path'],
+            first_character_index=chunk['first_character_index'],
+            last_character_index=chunk['last_character_index']
+        )
+        for _, chunk in all_results
+    ]
 
-    for e in all_result:
-        chunk_infos = e[1]
-        sources.append(MinimalSource(
-            file_path=chunk_infos['file_path'],
-            first_character_index=chunk_infos['first_character_index'],
-            last_character_index=chunk_infos['last_character_index'])
-            )
-
-    minimal_result.append(MinimalSearchResults(
-        question_id='q1',
+    return MinimalSearchResults(
+        question_id=question_id,
         question=query,
         retrieved_sources=sources
-    ))
-
-    result = StudentSearchResults(
-        search_results=minimal_result,
-        k=k
     )
 
-    return result.model_dump_json(indent=2)
+
+def retrieving(query: str, k: int) -> str:
+    """
+    Convenience wrapper for single query search.
+
+    Args:
+        query (str): The search query.
+        k (int): The maximum number of results to return.
+
+    Returns:
+        str: A JSON-formatted string of StudentSearchResults.
+    """
+
+    indexes = load_indexes()
+    result = search(query, k, indexes)
+
+    return StudentSearchResults(
+        search_results=[result],
+        k=k
+    ).model_dump_json(indent=2)
