@@ -20,6 +20,7 @@ import fire
 import sys
 from student.index.indexing import ingesting
 from student.search.retriever import retrieving
+from student.search.searcher import searcher
 
 
 def index(max_chunk_size: int) -> None:
@@ -33,10 +34,11 @@ def search(query: str, k: int = 1) -> None:
 
 
 def search_dataset(
-        student_search_results_path: str,
+        dataset_path: str,
+        k: int,
         save_directory: str
         ) -> None:
-    print('Process multiple questions and output search results')
+    searcher(dataset_path, k, save_directory)
 
 
 def answer(question: str, k: int | None = None) -> None:

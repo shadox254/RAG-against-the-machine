@@ -222,3 +222,4 @@ debug*
 .vscode
 note.txt
 data/processed
+output
