@@ -13,7 +13,7 @@
 #  File: searcher.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/25 12:44:32 by rruiz                                      #
-#  Updated: 2026/06/25 12:44:32 by rruiz                                      #
+#  Updated: 2026/06/25 15:02:12 by rruiz                                      #
 # *************************************************************************** #
 
 import os
