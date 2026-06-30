@@ -10,10 +10,15 @@
 #                                                                           #
 # ************************************************************************* #
 
-MYPY_FLAGS	= --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
-UV_VERSION	= uv --version
-UV_INSTALL	= curl -LsSf https://astral.sh/uv/install.sh | sh
-SRC			= student
+MYPY_FLAGS		= --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+UV_VERSION		= uv --version
+UV_INSTALL		= curl -LsSf https://astral.sh/uv/install.sh | sh
+SRC				= student
+MAX_CHUNK_SIZE	=
+QUESTION		=
+K				=
+DATASET_PATH	=
+SAVE_DIRECTORY	=
 
 install:
 	@if ! $(UV_VERSION) > /dev/null 2>&1; then\
@@ -22,7 +27,26 @@ install:
 	@uv sync
 
 run: install
+	clear
 	@uv run python -m $(SRC)
+
+index: install
+	clear
+	uv run python -m $(SRC) index --max_chunk_size $(MAX_CHUNK_SIZE)
+
+search: install
+	clear
+	uv run python -m $(SRC) search "$(QUESTION)" --k $(K)
+
+search_dataset: install
+	clear
+	uv run python -m $(SRC) search_dataset --dataset_path "$(DATASET_PATH)" --k $(K) --save_directory $(SAVE_DIRECTORY)
+
+answer: install
+
+answer_dataset: install
+
+evaluate: install
 
 debug:
 	@uv run python -m pdb -m $(SRC)

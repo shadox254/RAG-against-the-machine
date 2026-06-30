@@ -13,7 +13,7 @@
 #  File: searcher.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/25 12:44:32 by rruiz                                      #
-#  Updated: 2026/06/25 15:02:12 by rruiz                                      #
+#  Updated: 2026/06/30 09:59:05 by rruiz                                      #
 # *************************************************************************** #
 
 import os
@@ -65,7 +65,7 @@ def read_dataset(dataset_path: str) -> List[Tuple[str, str]]:
 
     if not os.path.exists(dataset_path):
         raise FileNotFoundError('Error: The directory'
-                                f' {dataset_path} does not'
+                                f' "{dataset_path}" does not'
                                 ' exist.')
 
     with open(dataset_path, 'r') as f:
