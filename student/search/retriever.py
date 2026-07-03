@@ -13,7 +13,7 @@
 #  File: retriever.py                                                         #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/22 17:31:51 by rruiz                                      #
-#  Updated: 2026/06/24 09:49:19 by rruiz                                      #
+#  Updated: 2026/07/03 10:11:30 by rruiz                                      #
 # *************************************************************************** #
 
 import bm25s
@@ -25,7 +25,7 @@ from student.models.MinimalSource import MinimalSource
 from typing import Tuple, Any
 
 
-def load_indexes() -> Tuple[bm25s.BM25, bm25s.BM25, Any, Any]:
+def load_indexes() -> Tuple[bm25s.BM25, Any]:
     """
     Loads BM25 indexes and chunk files.
 
@@ -36,45 +36,32 @@ def load_indexes() -> Tuple[bm25s.BM25, bm25s.BM25, Any, Any]:
         FileNotFoundError: If index directories or chunk files do not exist.
     """
 
-    md_dir = 'data/processed/bm25_md'
-    py_dir = 'data/processed/bm25_py'
-    md_chunks_f = 'data/processed/chunks/chunks_md.json'
-    py_chunks_f = 'data/processed/chunks/chunks_py.json'
+    index_dir = 'data/processed/bm25'
+    chunks_f = 'data/processed/chunks/chunks.json'
 
-    if not os.path.exists(md_dir):
-        raise FileNotFoundError('Error: The directory "data/processed/bm25_md"'
+    if not os.path.exists(index_dir):
+        raise FileNotFoundError('Error: The directory "data/processed/bm25"'
                                 ' does not exist. Try "uv run python -m'
                                 ' student index --max_chunk_size int" then'
                                 ' try the command again.')
 
-    if not os.path.exists(py_dir):
-        raise FileNotFoundError('Error: The directory "data/processed/bm25_py"'
-                                ' does not exist. Try "uv run python -m'
-                                ' student index --max_chunk_size int" then'
-                                ' try the command again.')
+    if not os.path.exists(chunks_f):
+        raise FileNotFoundError("""Error: Chunk files do not exist. Try "uv
+                                 run python -m student index --max_chunk_size
+                                 int" then try the command again.""")
 
-    if not os.path.exists(md_chunks_f) or not os.path.exists(py_chunks_f):
-        raise FileNotFoundError('Error: Chunk files do not exist. Try'
-                                ' "uv run python -m student index'
-                                ' --max_chunk_size int" then try the command'
-                                ' again.')
+    retriever = bm25s.BM25.load(save_dir=bm25s.Path(index_dir))
 
-    md = bm25s.BM25.load(save_dir=bm25s.Path(md_dir))
-    py = bm25s.BM25.load(save_dir=bm25s.Path(py_dir))
+    with open(chunks_f, 'r') as f:
+        chunks = json.load(f)
 
-    with open(md_chunks_f, 'r') as f:
-        chunks_md = json.load(f)
-
-    with open(py_chunks_f, 'r') as f:
-        chunks_py = json.load(f)
-
-    return (md, py, chunks_md, chunks_py)
+    return (retriever, chunks)
 
 
 def search(
     query: str,
     k: int,
-    indexes: Tuple[bm25s.BM25, bm25s.BM25, Any, Any],
+    indexes: Tuple[bm25s.BM25, Any],
     question_id: str = 'q1'
 ) -> MinimalSearchResults:
     """
@@ -90,31 +77,22 @@ def search(
         MinimalSearchResults: The retrieved sources for this query.
     """
 
-    md, py, chunks_md, chunks_py = indexes
+    retriever, chunks = indexes
 
     tokenized_query = bm25s.tokenize(query)
 
-    md_results = md.retrieve(tokenized_query, k=k)
-    py_results = py.retrieve(tokenized_query, k=k)
+    results = retriever.retrieve(tokenized_query, k=k)
 
-    all_results = []
-    for doc_index, score in zip(md_results.documents[0], md_results.scores[0]):
-        all_results.append((score, chunks_md[doc_index]))
-
-    for doc_index, score in zip(py_results.documents[0], py_results.scores[0]):
-        all_results.append((score, chunks_py[doc_index]))
-
-    all_results.sort(key=lambda x: x[0], reverse=True)
-    all_results = all_results[:k]
-
-    sources = [
-        MinimalSource(
-            file_path=chunk['file_path'],
-            first_character_index=chunk['first_character_index'],
-            last_character_index=chunk['last_character_index']
-        )
-        for _, chunk in all_results
-    ]
+    sources = []
+    for doc_index in results.documents[0]:
+        sources.append(
+            MinimalSource(
+                file_path=chunks[doc_index]['file_path'],
+                first_character_index=(
+                    chunks[doc_index]['first_character_index']),
+                last_character_index=chunks[doc_index]['last_character_index']
+                )
+                )
 
     return MinimalSearchResults(
         question_id=question_id,

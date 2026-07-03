@@ -13,7 +13,7 @@
 #  File: __main__.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/15 15:13:42 by rruiz                                      #
-#  Updated: 2026/06/30 09:58:35 by rruiz                                      #
+#  Updated: 2026/07/03 10:29:29 by rruiz                                      #
 # *************************************************************************** #
 
 import fire
@@ -21,6 +21,7 @@ import sys
 from student.index.indexing import ingesting
 from student.search.retriever import retrieving
 from student.search.searcher import searcher
+from student.answer.answering import answerer
 
 
 def index(max_chunk_size: int) -> None:
@@ -51,11 +52,14 @@ def search_dataset(
     searcher(dataset_path, k, save_directory)
 
 
-def answer(question: str, k: int) -> None:
-    print('Answer a single question with context')
+def answer(query: str, k: int = 1) -> None:
+    answerer(query, k)
 
 
-def answer_dataset() -> None:
+def answer_dataset(
+        student_search_results_path: str,
+        save_directory: str,
+        k: int = 1) -> None:
     print('Generate answers from search results')
 
 

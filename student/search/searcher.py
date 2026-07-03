@@ -13,7 +13,7 @@
 #  File: searcher.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/25 12:44:32 by rruiz                                      #
-#  Updated: 2026/06/30 09:59:05 by rruiz                                      #
+#  Updated: 2026/07/03 10:47:31 by rruiz                                      #
 # *************************************************************************** #
 
 import os
@@ -25,6 +25,16 @@ from student.models.StudentSearchResults import StudentSearchResults
 
 
 def searcher(dataset_path: str, k: int, save_directory: str) -> None:
+    """
+    Processes a dataset of questions, retrieves the top 'k' sources for each,
+    and saves the results as a JSON file.
+
+    Args:
+        dataset_path (str): Path to the JSON file containing the questions.
+        k (int): Number of documents/sources to retrieve for each question.
+        save_directory (str): Path to the directory where the results will be
+            saved.
+    """
 
     datas = read_dataset(dataset_path)
     indexes = load_indexes()
@@ -62,6 +72,19 @@ def searcher(dataset_path: str, k: int, save_directory: str) -> None:
 
 
 def read_dataset(dataset_path: str) -> List[Tuple[str, str]]:
+    """
+    Reads the dataset JSON file and extracts question IDs and text.
+
+    Args:
+        dataset_path (str): Path to the dataset file.
+
+    Returns:
+        List[Tuple[str, str]]: A list of tuples, where each tuple contains
+            (question_id, question).
+
+    Raises:
+        FileNotFoundError: If the specified dataset_path does not exist.
+    """
 
     if not os.path.exists(dataset_path):
         raise FileNotFoundError('Error: The directory'

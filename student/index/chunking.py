@@ -13,7 +13,7 @@
 #  File: chunking.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/16 13:51:15 by rruiz                                      #
-#  Updated: 2026/06/22 14:10:59 by rruiz                                      #
+#  Updated: 2026/07/02 15:41:31 by rruiz                                      #
 # *************************************************************************** #
 
 from typing import Tuple, List

@@ -223,3 +223,4 @@ debug*
 note.txt
 data/processed
 output
+hf_cache
