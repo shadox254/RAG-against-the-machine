@@ -13,7 +13,7 @@
 #  File: answering.py                                                         #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/30 10:02:19 by rruiz                                      #
-#  Updated: 2026/07/03 10:53:50 by rruiz                                      #
+#  Updated: 2026/07/03 10:59:30 by rruiz                                      #
 # *************************************************************************** #
 
 from student.search.retriever import search, load_indexes
@@ -33,7 +33,6 @@ def answerer(query: str, k: int) -> None:
     """
 
     indexes = load_indexes()
-    # research = search(query, k, indexes)
 
     research = search(query, k, indexes)
 
@@ -49,8 +48,8 @@ def answerer(query: str, k: int) -> None:
         device_map="auto"
     )
 
-    t = answering(context, query, tokenizer, model)
-    print(t)
+    response = answering(context, query, tokenizer, model)
+    print(response)
 
 
 def answering(
