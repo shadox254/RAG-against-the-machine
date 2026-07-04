@@ -13,13 +13,14 @@
 #  File: answering.py                                                         #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/30 10:02:19 by rruiz                                      #
-#  Updated: 2026/07/04 15:20:19 by rruiz                                      #
+#  Updated: 2026/07/04 16:08:49 by rruiz                                      #
 # *************************************************************************** #
 
 from student.search.retriever import search, load_indexes
 from student.models.MinimalSource import MinimalSource
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from typing import Any
+import torch
 
 
 def answerer(query: str, k: int) -> None:
@@ -72,7 +73,9 @@ def answering(
 
     system_txt = """Answer the question using ONLY the context provided with
      this information; do not make anything up—everything must come from the
-     context. If you don't know the answer, simply reply, “I don't know.”"""
+     context. If you don't know the answer, simply reply, "I don't know."
+     Keep your answer short and direct: at most 2-3 sentences, with no
+     repetition of the question or the context."""
 
     messages = [
         {"role": "system", "content": system_txt},
@@ -90,13 +93,13 @@ def answering(
         messages,
         tokenize=False,
         add_generation_prompt=True,
-        enable_thinking=True
+        enable_thinking=False
     )
     model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
 
     generated_ids = model.generate(
         **model_inputs,
-        max_new_tokens=100
+        max_new_tokens=60
     )
     output_ids = generated_ids[0][len(model_inputs.input_ids[0]):].tolist()
 
@@ -111,6 +114,7 @@ def answering(
         )
 
     response = str(decoded_output).strip("\n")
+    torch.cuda.empty_cache()
 
     return response
 
