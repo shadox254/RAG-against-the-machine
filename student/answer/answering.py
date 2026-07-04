@@ -13,7 +13,7 @@
 #  File: answering.py                                                         #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/30 10:02:19 by rruiz                                      #
-#  Updated: 2026/07/03 10:59:30 by rruiz                                      #
+#  Updated: 2026/07/04 11:56:17 by rruiz                                      #
 # *************************************************************************** #
 
 from student.search.retriever import search, load_indexes
@@ -37,8 +37,8 @@ def answerer(query: str, k: int) -> None:
     research = search(query, k, indexes)
 
     context = ''
-    for i, response in enumerate(research.retrieved_sources):
-        context += f'{get_content(response, i + 1)}\n'
+    for response in research.retrieved_sources:
+        context += f'{get_content(response)}\n'
 
     model_name = "Qwen/Qwen3-0.6B"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -53,7 +53,7 @@ def answerer(query: str, k: int) -> None:
 
 
 def answering(
-        user_txt: str,
+        context: str,
         query: str,
         tokenizer: Any,
         model: Any
@@ -79,7 +79,7 @@ def answering(
         {
             "role": "user",
             "content": (
-                f"Context:\n{user_txt}\n\n"
+                f"Context:\n{context}\n\n"
                 f"Question: {query}\n\n"
                 "Answer the question above using only the context provided."
                 ),
@@ -115,7 +115,7 @@ def answering(
     return response
 
 
-def get_content(response: MinimalSource, i: int) -> str:
+def get_content(response: MinimalSource) -> str:
     """
     Extracts the exact text slice from a source file using the character
         indices defined in the response object.
