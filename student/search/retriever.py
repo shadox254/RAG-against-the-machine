@@ -13,7 +13,7 @@
 #  File: retriever.py                                                         #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/22 17:31:51 by rruiz                                      #
-#  Updated: 2026/07/03 10:11:30 by rruiz                                      #
+#  Updated: 2026/07/04 11:22:23 by rruiz                                      #
 # *************************************************************************** #
 
 import bm25s
@@ -34,6 +34,7 @@ def load_indexes() -> Tuple[bm25s.BM25, Any]:
 
     Raises:
         FileNotFoundError: If index directories or chunk files do not exist.
+        ValueError: If chunk file can't be read.
     """
 
     index_dir = 'data/processed/bm25'
@@ -52,8 +53,11 @@ def load_indexes() -> Tuple[bm25s.BM25, Any]:
 
     retriever = bm25s.BM25.load(save_dir=bm25s.Path(index_dir))
 
-    with open(chunks_f, 'r') as f:
-        chunks = json.load(f)
+    try:
+        with open(chunks_f, 'r') as f:
+            chunks = json.load(f)
+    except (json.JSONDecodeError, TypeError) as e:
+        raise ValueError(f'Error, invalid file: {e}')
 
     return (retriever, chunks)
 
