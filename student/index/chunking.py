@@ -13,7 +13,7 @@
 #  File: chunking.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/16 13:51:15 by rruiz                                      #
-#  Updated: 2026/07/02 15:41:31 by rruiz                                      #
+#  Updated: 2026/07/04 15:20:48 by rruiz                                      #
 # *************************************************************************** #
 
 from typing import Tuple, List
@@ -56,7 +56,7 @@ def md_cutting(
         ) -> List[Tuple[int, int]]:
     """
     Splits the content into chunks of maximum size `max_chunk_size` using a
-        list of separators.
+    list of separators.
 
     Args:
         content (str): The text to be chunked.
@@ -144,7 +144,7 @@ def md_cutting(
 def py_cutting(content: str, max_chunk_size: int) -> List[Tuple[int, int]]:
     """
     "Splits the content into chunks of maximum size max_chunk_size using
-        LangChain's RecursiveCharacterTextSplitter."
+    LangChain's RecursiveCharacterTextSplitter."
 
     Args:
         content (str): The text to be chunked.

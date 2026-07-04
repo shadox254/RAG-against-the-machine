@@ -13,7 +13,7 @@
 #  File: answering.py                                                         #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/30 10:02:19 by rruiz                                      #
-#  Updated: 2026/07/04 11:56:17 by rruiz                                      #
+#  Updated: 2026/07/04 15:20:19 by rruiz                                      #
 # *************************************************************************** #
 
 from student.search.retriever import search, load_indexes
@@ -25,7 +25,7 @@ from typing import Any
 def answerer(query: str, k: int) -> None:
     """
     Searches for relevant sources for a given query, compiles the context,
-        generates an answer using the model, and prints it to the console.
+    generates an answer using the model, and prints it to the console.
 
     Args:
         query (str): The user's question to be answered.
@@ -37,8 +37,8 @@ def answerer(query: str, k: int) -> None:
     research = search(query, k, indexes)
 
     context = ''
-    for response in research.retrieved_sources:
-        context += f'{get_content(response)}\n'
+    for source in research.retrieved_sources:
+        context += f'{get_content(source)}\n'
 
     model_name = "Qwen/Qwen3-0.6B"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -60,7 +60,7 @@ def answering(
         ) -> str:
     """
     Generates an answer to a question using the Qwen/Qwen3-0.6B model based
-        strictly on the provided context.
+    strictly on the provided context.
 
     Args:
         user_txt (str): The compiled context text from retrieved sources.
@@ -90,7 +90,7 @@ def answering(
         messages,
         tokenize=False,
         add_generation_prompt=True,
-        enable_thinking=False
+        enable_thinking=True
     )
     model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
 
@@ -118,7 +118,7 @@ def answering(
 def get_content(response: MinimalSource) -> str:
     """
     Extracts the exact text slice from a source file using the character
-        indices defined in the response object.
+    indices defined in the response object.
 
     Args:
         response (MinimalSource): Object containing source metadata.

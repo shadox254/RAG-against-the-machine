@@ -13,7 +13,7 @@
 #  File: __main__.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/15 15:13:42 by rruiz                                      #
-#  Updated: 2026/07/03 10:29:29 by rruiz                                      #
+#  Updated: 2026/07/04 15:21:47 by rruiz                                      #
 # *************************************************************************** #
 
 import fire
@@ -22,6 +22,7 @@ from student.index.indexing import ingesting
 from student.search.retriever import retrieving
 from student.search.searcher import searcher
 from student.answer.answering import answerer
+from student.answer.answering_dataset import answering_dataset
 
 
 def index(max_chunk_size: int) -> None:
@@ -59,7 +60,24 @@ def answer(query: str, k: int = 1) -> None:
 def answer_dataset(
         student_search_results_path: str,
         save_directory: str,
-        k: int = 1) -> None:
+        k: int = 1,
+        model_name: str | None = None) -> None:
+
+    if model_name is None:
+        answering_dataset(
+            student_search_results_path,
+            save_directory,
+            k
+            )
+
+    else:
+        answering_dataset(
+            student_search_results_path,
+            save_directory,
+            k,
+            model_name
+            )
+
     print('Generate answers from search results')
 
 
