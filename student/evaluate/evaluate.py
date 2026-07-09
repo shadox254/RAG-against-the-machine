@@ -278,8 +278,8 @@ def print_result(question_count: int, result: Dict[int, float]) -> None:
             respective average recall scores.
     """
 
-    print('Evaluation Results')
+    print('🎯 Evaluation Results')
     print('========================================')
-    print(f'Questions evaluated: {question_count}')
+    print(f'📊 Questions evaluated: {question_count}')
     for cutoff, recall in result.items():
-        print(f'Recall@{cutoff}: {recall:.3f}')
+        print(f'📈 Recall@{cutoff}: {recall:.3f} ({int(recall * 100)}%)')
