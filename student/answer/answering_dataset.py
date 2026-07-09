@@ -24,7 +24,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from typing import Any, Tuple
 import os
 import json
-from student.answer.answering import get_content, answering
+from student.answer.answering import build_context, answering
 from tqdm import tqdm
 
 
@@ -53,7 +53,8 @@ def answering_dataset(
         student_search_results_path: str,
         save_directory: str,
         k: int,
-        model_name: str = "Qwen/Qwen3-0.6B") -> None:
+        max_context_length: int,
+        model_name: str = 'Qwen/Qwen3-0.6B') -> None:
     """
     Process a search results dataset to generate answers using a language
     model.
@@ -99,9 +100,10 @@ def answering_dataset(
 
     try:
         for search in student_search_result.search_results:
-            context = ''
-            for src in search.retrieved_sources:
-                context += f'{get_content(src)}\n'
+            context = build_context(
+                search.retrieved_sources,
+                max_context_length
+                )
 
             answer = answering(context, search.question, tokenizer, model)
 

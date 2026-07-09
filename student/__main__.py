@@ -23,9 +23,20 @@ from student.search.retriever import retrieving
 from student.search.searcher import searcher
 from student.answer.answering import answerer
 from student.answer.answering_dataset import answering_dataset
+from student.evaluate.evaluate import evaluating
+from json import JSONDecodeError
+from pydantic import ValidationError
 
 
 def index(max_chunk_size: int) -> None:
+    """
+    Triggers the ingestion and indexing of the repository files.
+
+    Args:
+        max_chunk_size (int): The maximum number of characters allowed per
+            chunk.
+    """
+
     try:
         int(max_chunk_size)
     except TypeError:
@@ -35,12 +46,22 @@ def index(max_chunk_size: int) -> None:
 
 
 def search(query: str, k: int = 1) -> None:
-    try:
-        int(k)
-        if int(k) <= 0:
-            raise ValueError('Error, k must be a integer greater than 0.')
-    except ValueError:
-        raise ValueError('Error, k must be a integer greater than 0.')
+    """
+    Searches the indexed knowledge base for a single query.
+
+    Args:
+        query (str): The search query provided by the user.
+        k (int, optional): The number of top results to retrieve. Defaults to
+            1.
+
+    Raises:
+        ValueError: If k is not between 1 and 20 included.
+    """
+
+    if k <= 0 or k > 20:
+        raise ValueError('Error, k must be an integer between 0 excluded and'
+                         ' 20 included')
+
     result = retrieving(query, k)
     print(result)
 
@@ -50,46 +71,133 @@ def search_dataset(
         k: int = 1,
         save_directory: str = 'data/output/search_results'
         ) -> None:
+    """
+    Processes multiple questions from a JSON dataset and outputs the search
+    results.
+
+    Args:
+        dataset_path (str): The file path to the input JSON dataset.
+        k (int, optional): The number of top results to retrieve per question.
+            Defaults to 1.
+        save_directory (str, optional): The directory where the search results
+            will be saved. Defaults to 'data/output/search_results'.
+
+    Raises:
+        ValueError: If k is not between 1 and 20 included.
+    """
+
+    if k <= 0 or k > 20:
+        raise ValueError('Error, k must be an integer between 0 excluded and'
+                         ' 20 included')
+
     searcher(dataset_path, k, save_directory)
 
 
-def answer(query: str, k: int = 1) -> None:
-    answerer(query, k)
+def answer(query: str,
+           k: int = 1,
+           model_name: str = 'Qwen/Qwen3-0.6B',
+           max_context_length: int = 2000
+           ) -> None:
+    """
+    Answers a single question using a Large Language Model with retrieved
+    context.
+
+    Args:
+        query (str): The question to answer.
+        k (int, optional): The number of sources to retrieve for context.
+            Defaults to 1.
+        model_name (str, optional): The name of the LLM to use.
+            Defaults to 'Qwen/Qwen3-0.6B'.
+        max_context_length (int, optional): The maximum length of the context
+            passed to the model. Defaults to 2000.
+
+    Raises:
+        ValueError: If k is not between 1 and 20 included.
+    """
+
+    if k <= 0 or k > 20:
+        raise ValueError('Error, k must be an integer between 0 excluded and'
+                         ' 20 included')
+
+    answerer(query, k, max_context_length, model_name)
 
 
 def answer_dataset(
         student_search_results_path: str,
         save_directory: str,
         k: int = 1,
-        model_name: str | None = None) -> None:
+        max_context_length: int = 2000,
+        model_name: str = 'Qwen/Qwen3-0.6B'
+        ) -> None:
+    """
+    Generates answers for a dataset of questions based on previously retrieved
+    search results.
 
-    if model_name is None:
-        answering_dataset(
-            student_search_results_path,
-            save_directory,
-            k
-            )
+    Args:
+        student_search_results_path (str): The path to the JSON file containing
+            the search results.
+        save_directory (str): The directory where the final answers will be
+            saved.
+        k (int, optional): The number of sources to consider per question.
+            Defaults to 1.
+        max_context_length (int, optional): The maximum allowed context length
+            for the LLM. Defaults to 2000.
+        model_name (str, optional): The name of the LLM to use.
+            Defaults to 'Qwen/Qwen3-0.6B'.
 
-    else:
-        answering_dataset(
-            student_search_results_path,
-            save_directory,
-            k,
-            model_name
-            )
+    Raises:
+        ValueError: If k is not between 1 and 20 included.
+    """
 
-    print('Generate answers from search results')
+    if k <= 0 or k > 20:
+        raise ValueError('Error, k must be an integer between 0 excluded and'
+                         ' 20 included')
+
+    answering_dataset(
+        student_search_results_path,
+        save_directory,
+        k,
+        max_context_length,
+        model_name
+        )
 
 
-def evaluate() -> None:
-    print('Evaluate search results against ground truth')
+def evaluate(
+        student_answer_path: str,
+        dataset_path: str,
+        k: int = 1,
+        max_context_length: int = 2000
+        ) -> None:
+    """
+    Evaluates the search results against the ground truth using the
+    recall@k metric.
+
+    Args:
+        student_answer_path (str): The path to the JSON file containing the
+            student's search results.
+        dataset_path (str): The path to the JSON file containing the ground
+            truth dataset.
+        k (int, optional): The cutoff rank for evaluation. Defaults to 1.
+        max_context_length (int, optional): The maximum allowed context length
+            (currently unused in metric). Defaults to 2000.
+
+    Raises:
+        ValueError: If k is not between 1 and 20 included.
+    """
+
+    if k <= 0 or k > 20:
+        raise ValueError('Error, k must be an integer between 0 excluded and'
+                         ' 20 included')
+
+    evaluating(student_answer_path, dataset_path, k, max_context_length)
 
 
 if __name__ == "__main__":
     try:
         fire.Fire()
 
-    except (FileNotFoundError, ValueError) as e:
+    except (FileNotFoundError, ValueError,
+            ValidationError, JSONDecodeError) as e:
         print(e)
 
     except KeyboardInterrupt:

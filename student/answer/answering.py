@@ -23,7 +23,11 @@ from typing import Any
 import torch
 
 
-def answerer(query: str, k: int) -> None:
+def answerer(query: str,
+             k: int,
+             max_context_length: int,
+             model_name: str = 'Qwen/Qwen3-0.6B'
+             ) -> None:
     """
     Searches for relevant sources for a given query, compiles the context,
     generates an answer using the model, and prints it to the console.
@@ -37,11 +41,8 @@ def answerer(query: str, k: int) -> None:
 
     research = search(query, k, indexes)
 
-    context = ''
-    for source in research.retrieved_sources:
-        context += f'{get_content(source)}\n'
+    context = build_context(research.retrieved_sources, max_context_length)
 
-    model_name = "Qwen/Qwen3-0.6B"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model: Any = AutoModelForCausalLM.from_pretrained(
         model_name,
@@ -141,3 +142,35 @@ def get_content(response: MinimalSource) -> str:
         text = f.read()
 
     return f'[{file}]\n {text[first_c_idx:last_c_idx]}\n'
+
+
+def build_context(
+        sources: list[MinimalSource],
+        max_context_length: int
+        ) -> str:
+    """
+    Builds the context string from retrieved sources, stopping before the
+     total length would exceed max_context_length. Sources are added whole
+     in their given order of relevance.
+
+    Args:
+        sources (List[MinimalSource]): The retrieved sources, ordered by
+            relevance.
+        max_context_length (int): The maximum length (in characters) the
+            resulting context string can have.
+
+    Returns:
+        str: The compiled context, within the max_context_length limit.
+    """
+
+    context = ''
+
+    for source in sources:
+        chunk_text = f'{get_content(source)}\n'
+
+        if len(context) + len(chunk_text) > max_context_length:
+            break
+
+        context += chunk_text
+
+    return context
