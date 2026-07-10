@@ -13,7 +13,7 @@
 #  File: chunking.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/16 13:51:15 by rruiz                                      #
-#  Updated: 2026/07/04 15:20:48 by rruiz                                      #
+#  Updated: 2026/07/10 11:50:48 by rruiz                                      #
 # *************************************************************************** #
 
 from typing import Tuple, List
@@ -43,7 +43,8 @@ def chunk(content: str,
         sep = ['\n\n#', '\n\n', '\n', ' ']
         blocks = md_cutting(content, sep, max_chunk_size, 0)
     else:
-        blocks = py_cutting(content, max_chunk_size)
+        chunk_overlap = max(0, max_chunk_size // 10)
+        blocks = py_cutting(content, max_chunk_size, chunk_overlap)
 
     return blocks
 
@@ -141,7 +142,10 @@ def md_cutting(
     return result
 
 
-def py_cutting(content: str, max_chunk_size: int) -> List[Tuple[int, int]]:
+def py_cutting(content: str,
+               max_chunk_size: int,
+               chunk_overlap: int = 0
+               ) -> List[Tuple[int, int]]:
     """
     "Splits the content into chunks of maximum size max_chunk_size using
     LangChain's RecursiveCharacterTextSplitter."
@@ -151,6 +155,9 @@ def py_cutting(content: str, max_chunk_size: int) -> List[Tuple[int, int]]:
         max_chunk_size (int): The maximum size of each chunk.
         offset (int): The reference index in the original text, used to keep
             track across recursive calls.
+        chunk_overlap (int): The number of characters of intentional overlap
+            between two consecutive chunks. Defaults to 0.
+
 
     Returns:
         List[Tuple[int, int]]: A list of tuples where the first value is the
@@ -160,19 +167,21 @@ def py_cutting(content: str, max_chunk_size: int) -> List[Tuple[int, int]]:
 
     result = []
 
-    test = RecursiveCharacterTextSplitter.from_language(
+    splitter = RecursiveCharacterTextSplitter.from_language(
         language=Language.PYTHON,
-        chunk_size=max_chunk_size
+        chunk_size=max_chunk_size,
+        chunk_overlap=chunk_overlap
     )
 
-    raw_chunks = test.split_text(content)
+    raw_chunks = splitter.split_text(content)
     last_index = 0
-    for chunk in raw_chunks:
-        start = content.find(chunk, last_index)
-        end = start + len(chunk)
-
+    for chunk_text in raw_chunks:
+        start = content.find(chunk_text, last_index)
+        end = start + len(chunk_text)
+ 
         result.append((start, end))
+ 
+        last_index = max(0, end - chunk_overlap)
 
-        last_index = start + 1
 
     return result

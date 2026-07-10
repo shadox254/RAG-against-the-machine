@@ -16,7 +16,7 @@
 #  Updated: 2026/06/16 11:44:38 by rruiz                                      #
 # *************************************************************************** #
 
-from pydantic import BaseModel
+from pydantic import BaseModel, computed_field
 from typing import List
 from student.models.MinimalSource import MinimalSource
 
@@ -25,3 +25,7 @@ class MinimalSearchResults(BaseModel):
     question_id: str
     question: str
     retrieved_sources: List[MinimalSource]
+
+    @computed_field
+    def question_str(self) -> str:
+        return self.question
