@@ -13,7 +13,7 @@
 #  File: chunking.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/16 13:51:15 by rruiz                                      #
-#  Updated: 2026/07/10 11:50:48 by rruiz                                      #
+#  Updated: 2026/07/11 09:36:21 by rruiz                                      #
 # *************************************************************************** #
 
 from typing import Tuple, List
@@ -40,8 +40,8 @@ def chunk(content: str,
     """
 
     if file_type == 'md':
-        sep = ['\n\n#', '\n\n', '\n', ' ']
-        blocks = md_cutting(content, sep, max_chunk_size, 0)
+        chunk_overlap = max(0, max_chunk_size // 10)
+        blocks = md_splitting(content, max_chunk_size, chunk_overlap)
     else:
         chunk_overlap = max(0, max_chunk_size // 10)
         blocks = py_cutting(content, max_chunk_size, chunk_overlap)
@@ -49,22 +49,19 @@ def chunk(content: str,
     return blocks
 
 
-def md_cutting(
-        content: str,
-        sep: list[str],
-        max_chunk_size: int,
-        offset: int
-        ) -> List[Tuple[int, int]]:
+def md_splitting(content: str,
+                 max_chunk_size: int,
+                 chunk_overlap: int = 0
+                 ) -> List[Tuple[int, int]]:
     """
-    Splits the content into chunks of maximum size `max_chunk_size` using a
-    list of separators.
+    Splits the content into chunks of maximum size max_chunk_size using
+    LangChain's RecursiveCharacterTextSplitter.
 
     Args:
         content (str): The text to be chunked.
-        sep (list[str]): The list of separators to use for cutting.
         max_chunk_size (int): The maximum size of each chunk.
-        offset (int): The reference index in the original text, used to keep
-            track across recursive calls.
+        chunk_overlap (int): The number of characters of intentional overlap
+            between two consecutive chunks. Defaults to 0 (no overlap).
 
     Returns:
         List[Tuple[int, int]]: A list of tuples where the first value is the
@@ -72,72 +69,23 @@ def md_cutting(
             value is the end index.
     """
 
-    if len(content) <= max_chunk_size:
-        return [(offset, offset + len(content))]
-
-    if len(sep) == 0:
-        chunks = []
-        pos = 0
-        while pos < len(content):
-            end = min(pos + max_chunk_size, len(content))
-            chunks.append((offset + pos, offset + end))
-            pos = end
-        return chunks
-
-    current_sep = sep[0]
-    other_sep = sep[1:]
-
-    parts = []
-    search_from = 0
-
-    while True:
-        index = content.find(current_sep, search_from)
-        if index == -1:
-            parts.append(content[search_from:])
-            break
-        parts.append(content[search_from:index + len(current_sep)])
-        search_from = index + len(current_sep)
-
-    if len(parts) == 1:
-        return md_cutting(content, other_sep, max_chunk_size, offset)
-
     result = []
-    current_chunk_len = 0
-    current_start = offset
-    local_offset = 0
 
-    for part in parts:
-        part_len = len(part)
+    splitter = RecursiveCharacterTextSplitter.from_language(
+        language=Language.MARKDOWN,
+        chunk_size=max_chunk_size,
+        chunk_overlap=chunk_overlap
+    )
 
-        if current_chunk_len + part_len <= max_chunk_size:
-            current_chunk_len += part_len
-        else:
-            if current_chunk_len > 0:
-                result.append(
-                    (current_start,
-                     current_start + current_chunk_len)
-                    )
+    raw_chunks = splitter.split_text(content)
+    search_from = 0
+    for chunk_text in raw_chunks:
+        start = content.find(chunk_text, search_from)
+        end = start + len(chunk_text)
 
-                local_offset += current_chunk_len
-                current_start = offset + local_offset
+        result.append((start, end))
 
-            if part_len > max_chunk_size:
-                sub_chunks = md_cutting(
-                    part,
-                    other_sep,
-                    max_chunk_size,
-                    current_start
-                    )
-
-                result.extend(sub_chunks)
-                local_offset += part_len
-                current_start = offset + local_offset
-                current_chunk_len = 0
-            else:
-                current_chunk_len = part_len
-
-    if current_chunk_len > 0:
-        result.append((current_start, current_start + current_chunk_len))
+        search_from = max(0, end - chunk_overlap)
 
     return result
 
@@ -147,14 +95,12 @@ def py_cutting(content: str,
                chunk_overlap: int = 0
                ) -> List[Tuple[int, int]]:
     """
-    "Splits the content into chunks of maximum size max_chunk_size using
-    LangChain's RecursiveCharacterTextSplitter."
+    Splits the content into chunks of maximum size max_chunk_size using
+    LangChain's RecursiveCharacterTextSplitter.
 
     Args:
         content (str): The text to be chunked.
         max_chunk_size (int): The maximum size of each chunk.
-        offset (int): The reference index in the original text, used to keep
-            track across recursive calls.
         chunk_overlap (int): The number of characters of intentional overlap
             between two consecutive chunks. Defaults to 0.
 
@@ -178,10 +124,9 @@ def py_cutting(content: str,
     for chunk_text in raw_chunks:
         start = content.find(chunk_text, last_index)
         end = start + len(chunk_text)
- 
-        result.append((start, end))
- 
-        last_index = max(0, end - chunk_overlap)
 
+        result.append((start, end))
+
+        last_index = max(0, end - chunk_overlap)
 
     return result
