@@ -103,12 +103,13 @@ def find_doc(directory: str) -> List[Tuple[str, str]]:
     """
 
     doc_list = []
+    extensions = ['py', 'md', 'txt']
 
     for element in os.walk(directory):
         root = element[0]
         for file in element[2]:
             ext = file.split('.')[-1]
-            if ext == 'py' or ext == 'md':
+            if ext in extensions:
                 path_file = os.path.join(root, file)
                 doc_list.append((path_file, ext))
 

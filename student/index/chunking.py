@@ -42,6 +42,8 @@ def chunk(content: str,
     chunk_overlap = max(0, max_chunk_size // 13)
     if file_type == 'md':
         blocks = md_cutting(content, max_chunk_size, chunk_overlap)
+    elif file_type == 'txt':
+        blocks = txt_cutting(content, max_chunk_size, chunk_overlap)
     else:
         blocks = py_cutting(content, max_chunk_size, chunk_overlap)
 
@@ -87,6 +89,53 @@ def md_cutting(content: str,
         search_from = max(0, end - chunk_overlap)
 
     return result
+
+
+def txt_cutting(content: str,
+                max_chunk_size: int,
+                chunk_overlap: int = 0
+                ) -> List[Tuple[int, int]]:
+    """
+    Splits generic plain-text content (e.g. .txt files such as
+    CMakeLists.txt) into chunks of maximum size max_chunk_size using
+    LangChain's generic RecursiveCharacterTextSplitter, with an explicit
+    overlap between consecutive chunks. Mirrors py_cutting and
+    md_splitting, but without a language-specific separator set, since
+    files like CMakeLists.txt have no Markdown or Python structure to
+    take advantage of.
+ 
+    Args:
+        content (str): The text to be chunked.
+        max_chunk_size (int): The maximum size of each chunk.
+        chunk_overlap (int): The number of characters of intentional overlap
+            between two consecutive chunks. Defaults to 0 (no overlap).
+ 
+    Returns:
+        List[Tuple[int, int]]: A list of tuples where the first value is the
+            start index of the chunk in the original content, and the second
+            value is the end index.
+    """
+ 
+    result = []
+ 
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=max_chunk_size,
+        chunk_overlap=chunk_overlap
+    )
+ 
+    raw_chunks = splitter.split_text(content)
+    search_from = 0
+ 
+    for chunk_text in raw_chunks:
+        start = content.find(chunk_text, search_from)
+        end = start + len(chunk_text)
+ 
+        result.append((start, end))
+ 
+        search_from = max(0, end - chunk_overlap)
+ 
+    return result
+
 
 
 def py_cutting(content: str,
