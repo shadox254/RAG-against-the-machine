@@ -39,17 +39,16 @@ def chunk(content: str,
             second value is the end index.
     """
 
+    chunk_overlap = max(0, max_chunk_size // 13)
     if file_type == 'md':
-        chunk_overlap = max(0, max_chunk_size // 10)
-        blocks = md_splitting(content, max_chunk_size, chunk_overlap)
+        blocks = md_cutting(content, max_chunk_size, chunk_overlap)
     else:
-        chunk_overlap = max(0, max_chunk_size // 10)
         blocks = py_cutting(content, max_chunk_size, chunk_overlap)
 
     return blocks
 
 
-def md_splitting(content: str,
+def md_cutting(content: str,
                  max_chunk_size: int,
                  chunk_overlap: int = 0
                  ) -> List[Tuple[int, int]]:
