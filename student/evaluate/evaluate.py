@@ -268,7 +268,7 @@ def calcul_recall_at_k(dataset_dict: Dict[str, AnsweredQuestion],
     return (score / question_count, question_count)
 
 
-def print_result(question_count: int, result: Dict[int, float]) -> None:
+def print_result(question_count: int | None, result: Dict[int, float]) -> None:
     """
     Displays the final evaluation metrics to the standard output.
 
