@@ -20,15 +20,6 @@ MYPY_FLAGS					= --warn-return-any --warn-unused-ignores --ignore-missing-import
 UV_VERSION					= uv --version
 UV_INSTALL					= curl -LsSf https://astral.sh/uv/install.sh | sh
 SRC							= student
-MAX_CHUNK_SIZE				=
-QUESTION					=
-K							=
-DATASET_PATH				=
-SAVE_DIRECTORY				=
-MODEL_NAME					= Qwen/Qwen3-0.6B
-MAX_CONTEXT_LENGTH			= 2000
-STUDENT_SEARCH_RESULTS_PATH	=
-STUDENT_ANSWER_PATH			=
 
 
 install:
@@ -41,23 +32,26 @@ run: install
 	@uv run python -m $(SRC)
 
 index: install
-	uv run python -m $(SRC) index --max_chunk_size $(MAX_CHUNK_SIZE)
+	uv run python -m student index --max_chunk_size 2000
 
 search: install
-	uv run python -m $(SRC) search "$(QUESTION)" --k $(K)
+	uv run python -m student search "How to configure OpenAI server?" --k 10
 
 search_dataset: install
-	clear
-	uv run python -m $(SRC) search_dataset --dataset_path "$(DATASET_PATH)" --k $(K) --save_directory $(SAVE_DIRECTORY)
+	uv run python -m student search_dataset --dataset_path data/datasets/UnansweredQuestions/dataset_docs_public.json --k 10 --save_directory data/output/search_results
+	uv run python -m student search_dataset --dataset_path data/datasets/UnansweredQuestions/dataset_code_public.json --k 10 --save_directory data/output/search_results
 
 answer: install
-	uv run python -m $(SRC) answer "$(QUESTION)" --k $(K) --model_name $(MODEL_NAME) --max_context_length $(MAX_CONTEXT_LENGTH)
+	uv run python -m student answer "How to configure OpenAI server?" --k 10
 
 answer_dataset: install
-	uv run python -m $(SRC) answer_dataset --student_search_results_path "$(STUDENT_SEARCH_RESULTS_PATH)" --save_directory $(SAVE_DIRECTORY) --k $(K) --max_context_length $(MAX_CONTEXT_LENGTH) --model_name $(MODEL_NAME)
+	uv run python -m student answer_dataset --student_search_results_path data/output/search_results/dataset_docs_public.json --save_directory data/output/search_results_and_answer
 
 evaluate: install
-	uv run python -m $(SRC) evaluate "$(STUDENT_ANSWER_PATH)" "$(DATASET_PATH)" --k $(K) --max_context_length $(MAX_CONTEXT_LENGTH)
+	echo 'Evaluate docs'
+	uv run python -m student evaluate --student_answer_path data/output/search_results/dataset_docs_public.json --dataset_path data/datasets/AnsweredQuestions/dataset_docs_public.json --k 10
+	echo 'Evaluate code'
+	uv run python -m student evaluate --student_answer_path data/output/search_results/dataset_code_public.json --dataset_path data/datasets/AnsweredQuestions/dataset_code_public.json --k 10
 
 debug:
 	@uv run python -m pdb -m $(SRC)
@@ -68,6 +62,8 @@ clean:
 
 fclean: clean
 	@rm -rf .venv
+	@rm -rf data/processed
+	@rm -rf data/output
 
 lint:
 	@-uv run flake8 $(SRC)

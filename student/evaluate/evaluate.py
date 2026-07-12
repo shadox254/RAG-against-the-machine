@@ -77,7 +77,7 @@ def evaluating(student_answer_path: str,
     cutoffs = [cutoff for cutoff in cutoffs if cutoff <= k]
 
     result = {}
-    final_question_count = 0
+    final_question_count = None
     for cutoff in cutoffs:
         recall, question_count = calcul_recall_at_k(dataset_dict,
                                                     answer_dict,
