@@ -25,7 +25,3 @@ class MinimalSearchResults(BaseModel):
     question_id: str
     question: str
     retrieved_sources: List[MinimalSource]
-
-    @computed_field
-    def question_str(self) -> str:
-        return self.question
