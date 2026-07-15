@@ -73,21 +73,39 @@ def answering_dataset(
     """
 
     if not os.path.exists(student_search_results_path):
-        raise FileNotFoundError('Error: The directory'
-                                f' "{student_search_results_path}" does not'
+        raise FileNotFoundError(f'Error: The file'
+                                f'" {student_search_results_path}" does not'
                                 ' exist.')
+
+    # Check if it's a directory instead of a file
+    if os.path.isdir(student_search_results_path):
+        raise IsADirectoryError('Error: Expected a file, but '
+                                f'"{student_search_results_path}" is a directory.')
 
     try:
         with open(student_search_results_path, 'r', encoding='utf-8') as f:
             content = json.load(f)
         student_search_result = StudentSearchResults(**content)
-    except (json.JSONDecodeError, TypeError) as e:
-        raise ValueError(f'Error, invalid file: {e}')
+
+    except json.JSONDecodeError as e:
+        raise ValueError('Error: Invalid JSON in file '
+                         f'"{student_search_results_path}": {e}')
+
+    except TypeError as e:
+        raise ValueError('Error: Invalid data structure in file '
+                         f'"{student_search_results_path}": {e}')
 
     print(f'Loaded {len(student_search_result.search_results)} questions from'
           f' {student_search_results_path}')
 
-    tokenizer, model = load_model(model_name)
+    if os.path.exists(save_directory) and not os.path.isdir(save_directory):
+        raise IsADirectoryError(f'Error: "{save_directory}" exists but is a'
+                                ' file, not a directory.')
+
+    try:
+        tokenizer, model = load_model(model_name)
+    except Exception as e:
+        raise ValueError(f'Error loading model "{model_name}": {e}')
 
     search_results = []
 
@@ -100,12 +118,14 @@ def answering_dataset(
 
     try:
         for search in student_search_result.search_results:
-            context = build_context(
-                search.retrieved_sources,
-                max_context_length
-                )
-
-            answer = answering(context, search.question, tokenizer, model)
+            try:
+                context = build_context(search.retrieved_sources, max_context_length)
+                answer = answering(context, search.question, tokenizer, model)
+            except (FileNotFoundError, OSError) as e:
+                print(f'Warning: skipping question {search.question_id} '
+                    f'(source unreadable): {e}')
+                progress_bar.update(1)
+                continue
 
             search_results.append(
                 MinimalAnswer(

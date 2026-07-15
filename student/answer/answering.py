@@ -43,12 +43,15 @@ def answerer(query: str,
 
     context = build_context(research.retrieved_sources, max_context_length)
 
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model: Any = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        torch_dtype="auto",
-        device_map="auto"
-    )
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        model: Any = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            torch_dtype="auto",
+            device_map="auto"
+        )
+    except Exception as e:
+        raise ValueError(f'Error loading model "{model_name}": {e}')
 
     response = answering(context, query, tokenizer, model)
     print(response)

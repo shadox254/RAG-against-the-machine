@@ -35,6 +35,10 @@ def index(max_chunk_size: int) -> None:
     Args:
         max_chunk_size (int): The maximum number of characters allowed per
             chunk.
+
+    Raises:
+        TypeError: If max_chunk_size is not an integer.
+        ValueError: If max_chunk_size is not between 10 and 2000 included.
     """
 
     if not isinstance(max_chunk_size, int):
@@ -58,7 +62,8 @@ def search(query: str, k: int = 1) -> None:
             1.
 
     Raises:
-        ValueError: If k is not an integer or not between 1 and 20 included.
+        TypeError: If k is not an integer.
+        ValueError: If k is not between 1 and 20 included.
     """
 
     if not isinstance(k, int):
@@ -89,8 +94,12 @@ def search_dataset(
             will be saved. Defaults to 'data/output/search_results'.
 
     Raises:
+        TypeError: If k is not an integer.
         ValueError: If k is not between 1 and 20 included.
     """
+
+    if not isinstance(k, int):
+        raise TypeError('Error, k must be an integer.')
 
     if k <= 0 or k > 20:
         raise ValueError('Error, k must be an integer between 0 excluded and'
@@ -118,12 +127,23 @@ def answer(query: str,
             passed to the model. Defaults to 2000.
 
     Raises:
+        TypeError: If k is not an integer.
         ValueError: If k is not between 1 and 20 included.
     """
 
+    if not isinstance(k, int):
+        raise TypeError('Error, k must be an integer.')
+
     if k <= 0 or k > 20:
-        raise ValueError('Error, k must be an integer between 0 excluded and'
+        raise ValueError('Error, k must be between 0 excluded and'
                          ' 20 included')
+
+    if not isinstance(max_context_length, int):
+        raise TypeError('Error, max_context_length must be an integer.')
+
+    if max_context_length <= 100:
+        raise ValueError('Error, max_context_length must be greater or equal'
+                         ' than 100')
 
     answerer(query, k, max_context_length, model_name)
 
@@ -155,9 +175,19 @@ def answer_dataset(
         ValueError: If k is not between 1 and 20 included.
     """
 
+    if not isinstance(k, int):
+        raise TypeError('Error, k must be an integer.')
+
     if k <= 0 or k > 20:
-        raise ValueError('Error, k must be an integer between 0 excluded and'
+        raise ValueError('Error, k must be between 0 excluded and'
                          ' 20 included')
+
+    if not isinstance(max_context_length, int):
+        raise TypeError('Error, max_context_length must be an integer.')
+
+    if max_context_length <= 100:
+        raise ValueError('Error, max_context_length must be greater or equal'
+                         ' than 100')
 
     answering_dataset(
         student_search_results_path,
@@ -191,9 +221,19 @@ def evaluate(
         ValueError: If k is not between 1 and 20 included.
     """
 
+    if not isinstance(k, int):
+        raise TypeError('Error, k must be an integer.')
+
     if k <= 0 or k > 20:
-        raise ValueError('Error, k must be an integer between 0 excluded and'
+        raise ValueError('Error, k must be between 0 excluded and'
                          ' 20 included')
+
+    if not isinstance(max_context_length, int):
+        raise TypeError('Error, max_context_length must be an integer.')
+
+    if max_context_length <= 100:
+        raise ValueError('Error, max_context_length must be greater or equal'
+                         ' than 100')
 
     evaluating(student_answer_path, dataset_path, k, max_context_length)
 
@@ -202,7 +242,7 @@ if __name__ == "__main__":
     try:
         fire.Fire()
 
-    except (FileNotFoundError, ValueError, TypeError,
+    except (FileNotFoundError, IsADirectoryError, ValueError, TypeError,
             ValidationError, JSONDecodeError) as e:
         print(e)
 

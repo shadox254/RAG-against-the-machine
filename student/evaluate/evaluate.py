@@ -105,8 +105,10 @@ def load_json_file(path: str) -> Any:
     """
 
     if not os.path.exists(path):
-        raise FileNotFoundError(f'Error: The directory "{path}" does not'
-                                ' exist.')
+        raise FileNotFoundError(f'Error: The file "{path}" does not exist.')
+
+    if os.path.isdir(path):
+        raise IsADirectoryError(f'Error: Expected a file, but "{path}" is a directory.')
 
     try:
         with open(path, 'r', encoding='utf-8') as f:

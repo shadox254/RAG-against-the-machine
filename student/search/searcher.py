@@ -84,21 +84,55 @@ def read_dataset(dataset_path: str) -> List[Tuple[str, str]]:
 
     Raises:
         FileNotFoundError: If the specified dataset_path does not exist.
+        IsADirectoryError: If the specified dataset_path is a directory.
+        ValueError: If the JSON structure is invalid or contains invalid data.
     """
 
     if not os.path.exists(dataset_path):
-        raise FileNotFoundError('Error: The directory'
-                                f' "{dataset_path}" does not'
-                                ' exist.')
+        raise FileNotFoundError(f'Error: The file "{dataset_path}" does not exist.')
 
-    with open(dataset_path, 'r') as f:
-        dataset = json.load(f)
+    if os.path.isdir(dataset_path):
+        raise IsADirectoryError(f'Error: Expected a file, but "{dataset_path}" is a directory.')
+
+    try:
+        with open(dataset_path, 'r') as f:
+            dataset = json.load(f)
+    except json.JSONDecodeError as e:
+        raise ValueError(f'Error: Invalid JSON in file "{dataset_path}": {e}')
+
+    if not isinstance(dataset, dict):
+        raise ValueError(f'Error: Expected JSON object, but got {type(dataset).__name__}.')
+
+    if 'rag_questions' not in dataset:
+        raise ValueError('Error: JSON must contain "rag_questions" key.')
+
+    if not isinstance(dataset['rag_questions'], list):
+        raise ValueError(f'Error: "rag_questions" must be a list, not {type(dataset["rag_questions"]).__name__}.')
 
     datas = []
+    seen_ids = set()
 
-    for question_data in dataset['rag_questions']:
-        datas.append(
-            (question_data['question_id'], question_data['question'])
-            )
+    for idx, question_data in enumerate(dataset['rag_questions']):
+
+        if not isinstance(question_data, dict):
+            raise ValueError(f'Error: Question at index {idx} must be an object, but got {type(question_data).__name__}.')
+
+        if 'question_id' not in question_data:
+            raise ValueError(f'Error: Question at index {idx} is missing "question_id" field.')
+
+        if 'question' not in question_data:
+            raise ValueError(f'Error: Question at index {idx} is missing "question" field.')
+
+        question_id = question_data['question_id']
+        question = question_data['question']
+
+        if not question or not isinstance(question, str) or not question.strip():
+            raise ValueError(f'Error: Question at index {idx} has empty or invalid "question" field.')
+
+        if question_id in seen_ids:
+            raise ValueError(f'Error: Duplicate question_id "{question_id}" found at index {idx}.')
+
+        seen_ids.add(question_id)
+        datas.append((question_id, question))
 
     return datas
