@@ -37,10 +37,13 @@ def index(max_chunk_size: int) -> None:
             chunk.
     """
 
-    try:
-        int(max_chunk_size)
-    except TypeError:
-        pass
+    if not isinstance(max_chunk_size, int):
+        raise TypeError('Error, max_chunk_size must be an integer.')
+
+    if max_chunk_size <= 10 or max_chunk_size > 10000:
+        raise ValueError('Error: max_chunk_size must be greater than 10 and'
+                         ' less than or equal to 10000.')
+
     ingesting(max_chunk_size)
     print('Ingestion complete! Indices saved under data/processed/')
 
@@ -55,12 +58,15 @@ def search(query: str, k: int = 1) -> None:
             1.
 
     Raises:
-        ValueError: If k is not between 1 and 20 included.
+        ValueError: If k is not an integer or not between 1 and 20 included.
     """
 
+    if not isinstance(k, int):
+        raise TypeError('Error, k must be an integer.')
+
     if k <= 0 or k > 20:
-        raise ValueError('Error, k must be an integer between 0 excluded and'
-                         ' 20 included')
+        raise ValueError('Error, k must be greater than 0 and'
+                         ' less than or equal to 20.')
 
     result = retrieving(query, k)
     print(result)
@@ -196,7 +202,7 @@ if __name__ == "__main__":
     try:
         fire.Fire()
 
-    except (FileNotFoundError, ValueError,
+    except (FileNotFoundError, ValueError, TypeError,
             ValidationError, JSONDecodeError) as e:
         print(e)
 

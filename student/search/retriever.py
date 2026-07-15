@@ -47,9 +47,9 @@ def load_indexes() -> Tuple[bm25s.BM25, Any]:
                                 ' try the command again.')
 
     if not os.path.exists(chunks_f):
-        raise FileNotFoundError("""Error: Chunk files do not exist. Try "uv
-                                 run python -m student index --max_chunk_size
-                                 int" then try the command again.""")
+        raise FileNotFoundError('Error: Chunk file do not exist. Try "uv'
+                                ' run python -m student index --max_chunk_size'
+                                ' int" then try the command again.')
 
     retriever = bm25s.BM25.load(save_dir=bm25s.Path(index_dir))
 
@@ -89,12 +89,19 @@ def search(
 
     sources = []
     for doc_index in results.documents[0]:
+        try:
+            chunk_data = chunks[doc_index]
+        except IndexError:
+            raise ValueError('Error: Chunk file are invalid. Try "uv'
+                                ' run python -m student index --max_chunk_size'
+                                ' int" then try the command again.')
+
         sources.append(
             MinimalSource(
-                file_path=chunks[doc_index]['file_path'],
+                file_path=chunk_data['file_path'],
                 first_character_index=(
-                    chunks[doc_index]['first_character_index']),
-                last_character_index=chunks[doc_index]['last_character_index']
+                    chunk_data['first_character_index']),
+                last_character_index=chunk_data['last_character_index']
                 )
                 )
 
