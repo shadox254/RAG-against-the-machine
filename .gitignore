@@ -224,3 +224,4 @@ note.txt
 data/processed
 output
 hf_cache
+data/raw
