@@ -13,7 +13,7 @@
 #  File: evaluate.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/07/06 11:54:11 by rruiz                                      #
-#  Updated: 2026/07/09 10:14:23 by rruiz                                      #
+#  Updated: 2026/07/17 10:11:12 by rruiz                                      #
 # *************************************************************************** #
 
 import json
@@ -108,7 +108,8 @@ def load_json_file(path: str) -> Any:
         raise FileNotFoundError(f'Error: The file "{path}" does not exist.')
 
     if os.path.isdir(path):
-        raise IsADirectoryError(f'Error: Expected a file, but "{path}" is a directory.')
+        raise IsADirectoryError(f'Error: Expected a file, but "{path}" is a'
+                                ' directory.')
 
     try:
         with open(path, 'r', encoding='utf-8') as f:

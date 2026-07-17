@@ -13,7 +13,7 @@
 #  File: searcher.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/25 12:44:32 by rruiz                                      #
-#  Updated: 2026/07/03 10:47:31 by rruiz                                      #
+#  Updated: 2026/07/17 09:56:41 by rruiz                                      #
 # *************************************************************************** #
 
 import os
@@ -89,10 +89,12 @@ def read_dataset(dataset_path: str) -> List[Tuple[str, str]]:
     """
 
     if not os.path.exists(dataset_path):
-        raise FileNotFoundError(f'Error: The file "{dataset_path}" does not exist.')
+        raise FileNotFoundError(f'Error: The file "{dataset_path}" does not'
+                                ' exist.')
 
     if os.path.isdir(dataset_path):
-        raise IsADirectoryError(f'Error: Expected a file, but "{dataset_path}" is a directory.')
+        raise IsADirectoryError(f'Error: Expected a file, but "{dataset_path}"'
+                                ' is a directory.')
 
     try:
         with open(dataset_path, 'r') as f:
@@ -101,13 +103,15 @@ def read_dataset(dataset_path: str) -> List[Tuple[str, str]]:
         raise ValueError(f'Error: Invalid JSON in file "{dataset_path}": {e}')
 
     if not isinstance(dataset, dict):
-        raise ValueError(f'Error: Expected JSON object, but got {type(dataset).__name__}.')
+        raise ValueError('Error: Expected JSON object, but got'
+                         f' {type(dataset).__name__}.')
 
     if 'rag_questions' not in dataset:
         raise ValueError('Error: JSON must contain "rag_questions" key.')
 
     if not isinstance(dataset['rag_questions'], list):
-        raise ValueError(f'Error: "rag_questions" must be a list, not {type(dataset["rag_questions"]).__name__}.')
+        raise ValueError('Error: "rag_questions" must be a list,'
+                         f' not {type(dataset["rag_questions"]).__name__}.')
 
     datas = []
     seen_ids = set()
@@ -115,22 +119,29 @@ def read_dataset(dataset_path: str) -> List[Tuple[str, str]]:
     for idx, question_data in enumerate(dataset['rag_questions']):
 
         if not isinstance(question_data, dict):
-            raise ValueError(f'Error: Question at index {idx} must be an object, but got {type(question_data).__name__}.')
+            raise ValueError(f'Error: Question at index {idx} must be an'
+                             ' object, but got'
+                             f' {type(question_data).__name__}.')
 
         if 'question_id' not in question_data:
-            raise ValueError(f'Error: Question at index {idx} is missing "question_id" field.')
+            raise ValueError(f'Error: Question at index {idx} is missing '
+                             '"question_id" field.')
 
         if 'question' not in question_data:
-            raise ValueError(f'Error: Question at index {idx} is missing "question" field.')
+            raise ValueError(f'Error: Question at index {idx} is missing'
+                             ' "question" field.')
 
         question_id = question_data['question_id']
         question = question_data['question']
 
-        if not question or not isinstance(question, str) or not question.strip():
-            raise ValueError(f'Error: Question at index {idx} has empty or invalid "question" field.')
+        if (not question or not isinstance(question, str) or
+                not question.strip()):
+            raise ValueError(f'Error: Question at index {idx} has empty or'
+                             ' invalid "question" field.')
 
         if question_id in seen_ids:
-            raise ValueError(f'Error: Duplicate question_id "{question_id}" found at index {idx}.')
+            raise ValueError(f'Error: Duplicate question_id "{question_id}"'
+                             ' found at index {idx}.')
 
         seen_ids.add(question_id)
         datas.append((question_id, question))

@@ -13,7 +13,7 @@
 #  File: answering_dataset.py                                                 #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/07/03 10:06:55 by rruiz                                      #
-#  Updated: 2026/07/04 15:20:59 by rruiz                                      #
+#  Updated: 2026/07/17 10:11:54 by rruiz                                      #
 # *************************************************************************** #
 
 from student.models.StudentSearchResults import StudentSearchResults
@@ -80,7 +80,8 @@ def answering_dataset(
     # Check if it's a directory instead of a file
     if os.path.isdir(student_search_results_path):
         raise IsADirectoryError('Error: Expected a file, but '
-                                f'"{student_search_results_path}" is a directory.')
+                                f'"{student_search_results_path}" is a'
+                                ' directory.')
 
     try:
         with open(student_search_results_path, 'r', encoding='utf-8') as f:
@@ -119,11 +120,14 @@ def answering_dataset(
     try:
         for search in student_search_result.search_results:
             try:
-                context = build_context(search.retrieved_sources, max_context_length)
+                context = build_context(
+                    search.retrieved_sources,
+                    max_context_length
+                    )
                 answer = answering(context, search.question, tokenizer, model)
             except (FileNotFoundError, OSError) as e:
                 print(f'Warning: skipping question {search.question_id} '
-                    f'(source unreadable): {e}')
+                      f'(source unreadable): {e}')
                 progress_bar.update(1)
                 continue
 

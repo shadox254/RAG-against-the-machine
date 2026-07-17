@@ -13,10 +13,10 @@
 #  File: MinimalSearchResults.py                                              #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/16 10:24:03 by rruiz                                      #
-#  Updated: 2026/06/16 11:44:38 by rruiz                                      #
+#  Updated: 2026/07/17 10:11:00 by rruiz                                      #
 # *************************************************************************** #
 
-from pydantic import BaseModel, computed_field
+from pydantic import BaseModel
 from typing import List
 from student.models.MinimalSource import MinimalSource
 

@@ -13,7 +13,7 @@
 #  File: retriever.py                                                         #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/22 17:31:51 by rruiz                                      #
-#  Updated: 2026/07/04 11:22:23 by rruiz                                      #
+#  Updated: 2026/07/17 10:11:33 by rruiz                                      #
 # *************************************************************************** #
 
 import bm25s
@@ -93,8 +93,8 @@ def search(
             chunk_data = chunks[doc_index]
         except IndexError:
             raise ValueError('Error: Chunk file are invalid. Try "uv'
-                                ' run python -m student index --max_chunk_size'
-                                ' int" then try the command again.')
+                             ' run python -m student index --max_chunk_size'
+                             ' int" then try the command again.')
 
         sources.append(
             MinimalSource(
