@@ -112,8 +112,8 @@ Measured against the subject's minimum performance thresholds (Chapter VI.1.2):
 
 | Metric | Threshold | Measured |
 | ------ | --------- | -------- |
-| Indexing time | ≤ 5 min | tester `time uv run python -m student index --max_chunk_size 2000` |
-| Cold start latency (first `answer` call, incl. model loading) | ≤ 60 s | tester `time uv run python -m student answer "..." --k 5` |
+| Indexing time | ≤ 5 min | 00:07.25s |
+| Cold start latency (first `answer` call, incl. model loading) | ≤ 60 s | 01:35.41 |
 | Warm retrieval throughput (1000 questions, `search` only, index pre-loaded) | ≤ 90 s | - |
 | Recall@5 — docs | ≥ 80% | 86% |
 | Recall@5 — code | ≥ 50% | 56% |
