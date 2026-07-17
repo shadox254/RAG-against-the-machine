@@ -13,7 +13,7 @@
 #  File: Makefile                                                             #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/15 15:13:42 by rruiz                                      #
-#  Updated: 2026/07/12 15:09:32 by rruiz                                      #
+#  Updated: 2026/07/17 10:49:34 by rruiz                                      #
 # *************************************************************************** #
 
 MYPY_FLAGS					= --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
@@ -64,6 +64,7 @@ fclean: clean
 	@rm -rf .venv
 	@rm -rf data/processed
 	@rm -rf data/output
+	@rm -rf hf_cache
 
 lint:
 	@-uv run flake8 $(SRC)
