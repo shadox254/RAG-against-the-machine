@@ -13,18 +13,18 @@
 #  File: evaluate.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/07/06 11:54:11 by rruiz                                      #
-#  Updated: 2026/07/17 10:11:12 by rruiz                                      #
+#  Updated: 2026/07/18 16:47:56 by rruiz                                      #
 # *************************************************************************** #
 
 import json
 import os
-from student.models.RagDataset import RagDataset
-from student.models.StudentSearchResults import StudentSearchResults
-from student.models.AnsweredQuestion import AnsweredQuestion
+from src.models.RagDataset import RagDataset
+from src.models.StudentSearchResults import StudentSearchResults
+from src.models.AnsweredQuestion import AnsweredQuestion
 from pydantic import ValidationError
-from student.models.MinimalSource import MinimalSource
+from src.models.MinimalSource import MinimalSource
 from typing import Tuple, Optional, Dict, Any
-from student.models.MinimalSearchResults import MinimalSearchResults
+from src.models.MinimalSearchResults import MinimalSearchResults
 
 
 def evaluating(student_answer_path: str,

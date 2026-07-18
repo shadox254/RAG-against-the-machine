@@ -10,14 +10,16 @@
 #                                  `-._,_)' // / ``--...____..-'              #
 #                                                                             #
 # *************************************************************************** #
-#  File: MinimalAnswer.py                                                     #
+#  File: StudentSearchResultsAndAnswer.py                                     #
 #  By: rruiz <rruiz@student.42.fr>                                            #
-#  Created: 2026/06/16 10:25:22 by rruiz                                      #
-#  Updated: 2026/06/16 11:44:31 by rruiz                                      #
+#  Created: 2026/06/16 10:27:09 by rruiz                                      #
+#  Updated: 2026/07/18 16:49:01 by rruiz                                      #
 # *************************************************************************** #
 
-from student.models.MinimalSearchResults import MinimalSearchResults
+from typing import List
+from src.models.StudentSearchResults import StudentSearchResults
+from src.models.MinimalAnswer import MinimalAnswer
 
 
-class MinimalAnswer(MinimalSearchResults):
-    answer: str
+class StudentSearchResultsAndAnswer(StudentSearchResults):
+    search_results: List[MinimalAnswer]  # type: ignore[assignment]

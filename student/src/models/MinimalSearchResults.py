@@ -10,17 +10,18 @@
 #                                  `-._,_)' // / ``--...____..-'              #
 #                                                                             #
 # *************************************************************************** #
-#  File: RagDataset.py                                                        #
+#  File: MinimalSearchResults.py                                              #
 #  By: rruiz <rruiz@student.42.fr>                                            #
-#  Created: 2026/06/16 10:22:42 by rruiz                                      #
-#  Updated: 2026/06/16 11:44:37 by rruiz                                      #
+#  Created: 2026/06/16 10:24:03 by rruiz                                      #
+#  Updated: 2026/07/18 16:48:47 by rruiz                                      #
 # *************************************************************************** #
 
 from pydantic import BaseModel
 from typing import List
-from student.models.AnsweredQuestion import AnsweredQuestion
-from student.models.UnansweredQuestion import UnansweredQuestion
+from src.models.MinimalSource import MinimalSource
 
 
-class RagDataset(BaseModel):
-    rag_questions: List[AnsweredQuestion | UnansweredQuestion]
+class MinimalSearchResults(BaseModel):
+    question_id: str
+    question: str
+    retrieved_sources: List[MinimalSource]

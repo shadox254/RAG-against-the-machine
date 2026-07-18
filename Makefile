@@ -13,7 +13,7 @@
 #  File: Makefile                                                             #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/15 15:13:42 by rruiz                                      #
-#  Updated: 2026/07/17 10:49:34 by rruiz                                      #
+#  Updated: 2026/07/17 11:15:13 by rruiz                                      #
 # *************************************************************************** #
 
 MYPY_FLAGS					= --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
@@ -46,6 +46,7 @@ answer: install
 
 answer_dataset: install
 	uv run python -m student answer_dataset --student_search_results_path data/output/search_results/dataset_docs_public.json --save_directory data/output/search_results_and_answer
+	uv run python -m student answer_dataset --student_search_results_path data/output/search_results/dataset_code_public.json --save_directory data/output/search_results_and_answer
 
 evaluate: install
 	echo 'Evaluate docs'

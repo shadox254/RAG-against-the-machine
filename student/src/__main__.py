@@ -13,22 +13,22 @@
 #  File: __main__.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/15 15:13:42 by rruiz                                      #
-#  Updated: 2026/07/04 15:21:47 by rruiz                                      #
+#  Updated: 2026/07/18 16:47:07 by rruiz                                      #
 # *************************************************************************** #
 
 import fire
 import sys
-from student.index.indexing import ingesting
-from student.search.retriever import retrieving
-from student.search.searcher import searcher
-from student.answer.answering import answerer
-from student.answer.answering_dataset import answering_dataset
-from student.evaluate.evaluate import evaluating
+from src.index.indexing import ingesting
+from src.search.retriever import retrieving
+from src.search.searcher import searcher
+from src.answer.answering import answerer
+from src.answer.answering_dataset import answering_dataset
+from src.evaluate.evaluate import evaluating
 from json import JSONDecodeError
 from pydantic import ValidationError
 
 
-def index(max_chunk_size: int) -> None:
+def index(max_chunk_size: int = 2000) -> None:
     """
     Triggers the ingestion and indexing of the repository files.
 

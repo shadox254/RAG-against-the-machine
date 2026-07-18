@@ -13,7 +13,7 @@
 #  File: indexing.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/16 12:57:52 by rruiz                                      #
-#  Updated: 2026/07/02 14:22:16 by rruiz                                      #
+#  Updated: 2026/07/18 16:48:30 by rruiz                                      #
 # *************************************************************************** #
 
 import os
@@ -21,7 +21,7 @@ import json
 import bm25s
 from typing import Tuple, List
 from tqdm import tqdm
-from student.index.chunking import chunk
+from src.index.chunking import chunk
 
 
 def ingesting(max_chunk_size: int) -> None:

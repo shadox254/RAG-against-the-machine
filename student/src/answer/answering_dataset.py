@@ -13,18 +13,18 @@
 #  File: answering_dataset.py                                                 #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/07/03 10:06:55 by rruiz                                      #
-#  Updated: 2026/07/17 10:11:54 by rruiz                                      #
+#  Updated: 2026/07/18 16:48:19 by rruiz                                      #
 # *************************************************************************** #
 
-from student.models.StudentSearchResults import StudentSearchResults
-from student.models.MinimalAnswer import MinimalAnswer
-from student.models.StudentSearchResultsAndAnswer import (
+from src.models.StudentSearchResults import StudentSearchResults
+from src.models.MinimalAnswer import MinimalAnswer
+from src.models.StudentSearchResultsAndAnswer import (
     StudentSearchResultsAndAnswer)
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from typing import Any, Tuple
 import os
 import json
-from student.answer.answering import build_context, answering
+from src.answer.answering import build_context, answering
 from tqdm import tqdm
 
 

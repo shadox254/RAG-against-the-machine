@@ -10,18 +10,17 @@
 #                                  `-._,_)' // / ``--...____..-'              #
 #                                                                             #
 # *************************************************************************** #
-#  File: MinimalSearchResults.py                                              #
+#  File: StudentSearchResults.py                                              #
 #  By: rruiz <rruiz@student.42.fr>                                            #
-#  Created: 2026/06/16 10:24:03 by rruiz                                      #
-#  Updated: 2026/07/17 10:11:00 by rruiz                                      #
+#  Created: 2026/06/16 10:26:08 by rruiz                                      #
+#  Updated: 2026/07/18 16:48:58 by rruiz                                      #
 # *************************************************************************** #
 
 from pydantic import BaseModel
 from typing import List
-from student.models.MinimalSource import MinimalSource
+from src.models.MinimalSearchResults import MinimalSearchResults
 
 
-class MinimalSearchResults(BaseModel):
-    question_id: str
-    question: str
-    retrieved_sources: List[MinimalSource]
+class StudentSearchResults(BaseModel):
+    search_results: List[MinimalSearchResults]
+    k: int

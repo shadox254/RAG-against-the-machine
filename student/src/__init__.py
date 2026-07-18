@@ -10,17 +10,8 @@
 #                                  `-._,_)' // / ``--...____..-'              #
 #                                                                             #
 # *************************************************************************** #
-#  File: AnsweredQuestion.py                                                  #
+#  File: __init__.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
-#  Created: 2026/06/16 10:21:50 by rruiz                                      #
-#  Updated: 2026/06/16 11:44:36 by rruiz                                      #
+#  Created: 2026/06/16 10:31:23 by rruiz                                      #
+#  Updated: 2026/06/16 10:31:24 by rruiz                                      #
 # *************************************************************************** #
-
-from typing import List
-from student.models.MinimalSource import MinimalSource
-from student.models.UnansweredQuestion import UnansweredQuestion
-
-
-class AnsweredQuestion(UnansweredQuestion):
-    sources: List[MinimalSource]
-    answer: str

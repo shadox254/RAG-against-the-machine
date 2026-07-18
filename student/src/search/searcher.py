@@ -13,15 +13,15 @@
 #  File: searcher.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/25 12:44:32 by rruiz                                      #
-#  Updated: 2026/07/17 09:56:41 by rruiz                                      #
+#  Updated: 2026/07/18 16:49:18 by rruiz                                      #
 # *************************************************************************** #
 
 import os
 import json
 from tqdm import tqdm
 from typing import Tuple, List
-from student.search.retriever import load_indexes, search
-from student.models.StudentSearchResults import StudentSearchResults
+from src.search.retriever import load_indexes, search
+from src.models.StudentSearchResults import StudentSearchResults
 
 
 def searcher(dataset_path: str, k: int, save_directory: str) -> None:

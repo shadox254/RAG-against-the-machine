@@ -13,11 +13,11 @@
 #  File: answering.py                                                         #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/30 10:02:19 by rruiz                                      #
-#  Updated: 2026/07/04 16:08:49 by rruiz                                      #
+#  Updated: 2026/07/18 16:48:03 by rruiz                                      #
 # *************************************************************************** #
 
-from student.search.retriever import search, load_indexes
-from student.models.MinimalSource import MinimalSource
+from src.search.retriever import search, load_indexes
+from src.models.MinimalSource import MinimalSource
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from typing import Any
 import torch

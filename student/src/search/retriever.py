@@ -13,15 +13,15 @@
 #  File: retriever.py                                                         #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/22 17:31:51 by rruiz                                      #
-#  Updated: 2026/07/17 10:11:33 by rruiz                                      #
+#  Updated: 2026/07/18 16:49:12 by rruiz                                      #
 # *************************************************************************** #
 
 import bm25s
 import json
 import os
-from student.models.MinimalSearchResults import MinimalSearchResults
-from student.models.StudentSearchResults import StudentSearchResults
-from student.models.MinimalSource import MinimalSource
+from src.models.MinimalSearchResults import MinimalSearchResults
+from src.models.StudentSearchResults import StudentSearchResults
+from src.models.MinimalSource import MinimalSource
 from typing import Tuple, Any
 
 
