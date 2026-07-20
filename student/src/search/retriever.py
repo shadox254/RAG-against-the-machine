@@ -13,7 +13,7 @@
 #  File: retriever.py                                                         #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/22 17:31:51 by rruiz                                      #
-#  Updated: 2026/07/18 16:49:12 by rruiz                                      #
+#  Updated: 2026/07/20 12:13:50 by rruiz                                      #
 # *************************************************************************** #
 
 import bm25s
@@ -37,8 +37,8 @@ def load_indexes() -> Tuple[bm25s.BM25, Any]:
         ValueError: If chunk file can't be read.
     """
 
-    index_dir = 'data/processed/bm25'
-    chunks_f = 'data/processed/chunks/chunks.json'
+    index_dir = '../data/processed/bm25'
+    chunks_f = '../data/processed/chunks/chunks.json'
 
     if not os.path.exists(index_dir):
         raise FileNotFoundError('Error: The directory "data/processed/bm25"'
@@ -98,7 +98,7 @@ def search(
 
         sources.append(
             MinimalSource(
-                file_path=chunk_data['file_path'],
+                file_path=chunk_data['file_path'].replace('../', ''),
                 first_character_index=(
                     chunk_data['first_character_index']),
                 last_character_index=chunk_data['last_character_index']
@@ -107,7 +107,7 @@ def search(
 
     return MinimalSearchResults(
         question_id=question_id,
-        question=query,
+        question_str=query,
         retrieved_sources=sources
     )
 
@@ -130,4 +130,4 @@ def retrieving(query: str, k: int) -> str:
     return StudentSearchResults(
         search_results=[result],
         k=k
-    ).model_dump_json(indent=2)
+    ).model_dump_json(indent=2, by_alias=True)

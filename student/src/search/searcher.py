@@ -13,7 +13,7 @@
 #  File: searcher.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/25 12:44:32 by rruiz                                      #
-#  Updated: 2026/07/18 16:49:18 by rruiz                                      #
+#  Updated: 2026/07/20 09:49:36 by rruiz                                      #
 # *************************************************************************** #
 
 import os
@@ -53,7 +53,6 @@ def searcher(dataset_path: str, k: int, save_directory: str) -> None:
             question_id, question = data
             results.append(search(question, k, indexes, question_id))
             progress_bar.update(1)
-
     finally:
         progress_bar.close()
 
@@ -66,7 +65,7 @@ def searcher(dataset_path: str, k: int, save_directory: str) -> None:
     save_path = os.path.join(save_directory, os.path.basename(dataset_path))
 
     with open(save_path, 'w+') as f:
-        f.write(result.model_dump_json(indent=2))
+        f.write(result.model_dump_json(indent=2, by_alias=True))
 
     print(f'Saved student_search_results to {save_path}')
 

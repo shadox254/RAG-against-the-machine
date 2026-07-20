@@ -13,7 +13,7 @@
 #  File: answering_dataset.py                                                 #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/07/03 10:06:55 by rruiz                                      #
-#  Updated: 2026/07/20 10:16:51 by rruiz                                      #
+#  Updated: 2026/07/20 11:48:22 by rruiz                                      #
 # *************************************************************************** #
 
 from src.models.StudentSearchResults import StudentSearchResults
@@ -71,6 +71,8 @@ def answering_dataset(
         model_name (str, optional): Name of the model to use. Defaults to
             "Qwen/Qwen3-0.6B".
     """
+
+    student_search_results_path = f'../{student_search_results_path}'
 
     if not os.path.exists(student_search_results_path):
         raise FileNotFoundError(f'Error: The file'
@@ -158,6 +160,6 @@ def answering_dataset(
         )
 
     with open(save_path, 'w', encoding='utf-8') as f:
-        f.write(result.model_dump_json(indent=2))
+        f.write(result.model_dump_json(indent=2, by_alias=True))
 
     print(f'Saved student_search_results_and_answer to {save_path}')

@@ -13,7 +13,7 @@
 #  File: evaluate.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/07/06 11:54:11 by rruiz                                      #
-#  Updated: 2026/07/20 09:57:39 by rruiz                                      #
+#  Updated: 2026/07/20 12:23:02 by rruiz                                      #
 # *************************************************************************** #
 
 import json
@@ -48,8 +48,8 @@ def evaluating(student_answer_path: str,
         ValueError: If the loaded data fails Pydantic validation.
     """
 
-    answer_json = load_json_file(student_answer_path)
-    dataset_json = load_json_file(dataset_path)
+    answer_json = load_json_file(f'../{student_answer_path}')
+    dataset_json = load_json_file(f'../{dataset_path}')
 
     try:
         answer_data = StudentSearchResults(**answer_json)

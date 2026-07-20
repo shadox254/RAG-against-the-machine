@@ -13,15 +13,15 @@
 #  File: MinimalSearchResults.py                                              #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/16 10:24:03 by rruiz                                      #
-#  Updated: 2026/07/18 16:48:47 by rruiz                                      #
+#  Updated: 2026/07/20 12:13:36 by rruiz                                      #
 # *************************************************************************** #
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List
 from src.models.MinimalSource import MinimalSource
 
 
 class MinimalSearchResults(BaseModel):
     question_id: str
-    question: str
+    question: str = Field(alias='question_str')
     retrieved_sources: List[MinimalSource]

@@ -13,7 +13,7 @@
 #  File: StudentSearchResultsAndAnswer.py                                     #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/16 10:27:09 by rruiz                                      #
-#  Updated: 2026/07/18 16:49:01 by rruiz                                      #
+#  Updated: 2026/07/20 10:21:24 by rruiz                                      #
 # *************************************************************************** #
 
 from typing import List

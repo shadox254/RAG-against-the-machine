@@ -13,7 +13,7 @@
 #  File: __main__.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/15 15:13:42 by rruiz                                      #
-#  Updated: 2026/07/18 16:47:07 by rruiz                                      #
+#  Updated: 2026/07/20 11:48:18 by rruiz                                      #
 # *************************************************************************** #
 
 import fire
@@ -80,7 +80,7 @@ def search(query: str, k: int = 1) -> None:
 def search_dataset(
         dataset_path: str,
         k: int = 1,
-        save_directory: str = 'data/output/search_results'
+        save_directory: str = '../data/output/search_results'
         ) -> None:
     """
     Processes multiple questions from a JSON dataset and outputs the search
@@ -201,8 +201,7 @@ def answer_dataset(
 def evaluate(
         student_answer_path: str,
         dataset_path: str,
-        k: int = 1,
-        max_context_length: int = 2000
+        k: int = 1
         ) -> None:
     """
     Evaluates the search results against the ground truth using the
@@ -228,14 +227,7 @@ def evaluate(
         raise ValueError('Error, k must be between 0 excluded and'
                          ' 20 included')
 
-    if not isinstance(max_context_length, int):
-        raise TypeError('Error, max_context_length must be an integer.')
-
-    if max_context_length <= 100:
-        raise ValueError('Error, max_context_length must be greater or equal'
-                         ' than 100')
-
-    evaluating(student_answer_path, dataset_path, k, max_context_length)
+    evaluating(student_answer_path, dataset_path, k)
 
 
 if __name__ == "__main__":

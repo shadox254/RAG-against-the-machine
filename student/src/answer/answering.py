@@ -13,7 +13,7 @@
 #  File: answering.py                                                         #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/30 10:02:19 by rruiz                                      #
-#  Updated: 2026/07/18 16:48:03 by rruiz                                      #
+#  Updated: 2026/07/20 11:36:23 by rruiz                                      #
 # *************************************************************************** #
 
 from src.search.retriever import search, load_indexes
@@ -137,7 +137,7 @@ def get_content(response: MinimalSource) -> str:
             text slice.
     """
 
-    file = response.file_path
+    file = f'../{response.file_path}'
     first_c_idx = response.first_character_index
     last_c_idx = response.last_character_index
 
