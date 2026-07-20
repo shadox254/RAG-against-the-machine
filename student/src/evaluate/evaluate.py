@@ -13,7 +13,7 @@
 #  File: evaluate.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/07/06 11:54:11 by rruiz                                      #
-#  Updated: 2026/07/18 16:47:56 by rruiz                                      #
+#  Updated: 2026/07/20 09:57:39 by rruiz                                      #
 # *************************************************************************** #
 
 import json
@@ -29,8 +29,7 @@ from src.models.MinimalSearchResults import MinimalSearchResults
 
 def evaluating(student_answer_path: str,
                dataset_path: str,
-               k: int,
-               max_context_length: int
+               k: int
                ) -> None:
     """
     Orchestrates the evaluation of student search results against the dataset.

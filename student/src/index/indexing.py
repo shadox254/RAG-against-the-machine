@@ -13,7 +13,7 @@
 #  File: indexing.py                                                          #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/06/16 12:57:52 by rruiz                                      #
-#  Updated: 2026/07/18 16:48:30 by rruiz                                      #
+#  Updated: 2026/07/20 09:34:57 by rruiz                                      #
 # *************************************************************************** #
 
 import os
@@ -27,14 +27,14 @@ from src.index.chunking import chunk
 def ingesting(max_chunk_size: int) -> None:
     """
     Handles the indexing logic: iterates through the files to process,
-        splits them into chunks, indexes them, and saves the output in a
-        properly formatted .json file.
+    splits them into chunks, indexes them, and saves the output in a
+    properly formatted .json file.
 
     Args:
         max_chunk_size (int): The maximum size of each chunk.
     """
 
-    src_dir = 'data/raw/vllm-0.10.1'
+    src_dir = '../data/raw/vllm-0.10.1'
     doc_list = find_doc(src_dir)
 
     try:
@@ -69,12 +69,12 @@ def ingesting(max_chunk_size: int) -> None:
         tokens = bm25s.tokenize(corpus)
         retriever = bm25s.BM25(corpus=corpus)
         retriever.index(tokens)
-        retriever.save('data/processed/bm25')
+        retriever.save('../data/processed/bm25')
         progress_bar.update(1)
 
         progress_bar.close()
 
-        output_dir = 'data/processed/chunks'
+        output_dir = '../data/processed/chunks'
         os.makedirs(output_dir, exist_ok=True)
 
         if len(chunks) > 0:

@@ -13,7 +13,7 @@
 #  File: answering_dataset.py                                                 #
 #  By: rruiz <rruiz@student.42.fr>                                            #
 #  Created: 2026/07/03 10:06:55 by rruiz                                      #
-#  Updated: 2026/07/18 16:48:19 by rruiz                                      #
+#  Updated: 2026/07/20 10:16:51 by rruiz                                      #
 # *************************************************************************** #
 
 from src.models.StudentSearchResults import StudentSearchResults
@@ -134,7 +134,7 @@ def answering_dataset(
             search_results.append(
                 MinimalAnswer(
                     question_id=search.question_id,
-                    question=search.question,
+                    question_str=search.question,
                     retrieved_sources=search.retrieved_sources,
                     answer=answer
                 )
