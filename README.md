@@ -212,4 +212,4 @@ Recall@10: 0.920
 - **Debugging by testing**: Provide tests that cause crashes or other unintended behavior.
 - **README structuring & proofreading**: used Claude to get a section-by-section skeleton of the README based on the subject's requirements, and to proofread/correct grammar and English phrasing on each section. All technical content was written by me.
 
-> ⚠️ **Important Note:** AI was used exclusively as a learning assistant and debugging tool. No code or documentation was blindly copied or pasted. Every concept was thoroughly analyzed, refactored, and implemented manually to ensure deep understanding and strict compliance with the project rules.
+> ⚠️ **Important Note:** AI was used exclusively as a learning assistant and debugging tool. No code was blindly copied or pasted. Every concept was thoroughly analyzed, refactored, and implemented manually to ensure deep understanding and strict compliance with the project rules.
